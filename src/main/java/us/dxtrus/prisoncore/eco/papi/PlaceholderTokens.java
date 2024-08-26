@@ -1,5 +1,6 @@
 package us.dxtrus.prisoncore.eco.papi;
 
+import lombok.Getter;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +10,26 @@ import us.dxtrus.prisoncore.eco.EconomyManager;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 
+@Getter
 public class PlaceholderTokens extends PlaceholderExpansion {
+    private final String identifier = "prisoncore";
+    private final String version = "1.0.0";
+    private final String author = "DXTRUS";
+
+    @Override
+    public boolean persist() {
+        return true;
+    }
+
+    @Override
+    public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
+        if (params.equalsIgnoreCase("tokens")) {
+            EconomyManager.Tokens tokens = EconomyManager.getTokens(player.getUniqueId());
+            return formatBigInteger(tokens.getCount());
+        }
+
+        return null;
+    }
 
     private static final String[] SUFFIXES = {
             "", "K", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No"
@@ -36,27 +56,5 @@ public class PlaceholderTokens extends PlaceholderExpansion {
         // To get a more precise decimal value
         double formattedValue = value.doubleValue() + remainder.doubleValue() / 1000.0;
         return df.format(formattedValue) + suffix;
-    }
-
-    @Override public @NotNull String getIdentifier() {
-        return "prisoncore";
-    }
-
-    @Override public @NotNull String getAuthor() {
-        return "ASDEV";
-    }
-
-    @Override public @NotNull String getVersion() {
-        return "1.0";
-    }
-
-    @Override
-    public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
-        if (params.equalsIgnoreCase("tokens")) {
-            EconomyManager.Tokens tokens = EconomyManager.getTokens(player.getUniqueId());
-            return formatBigInteger(tokens.getCount());
-        }
-
-        return null;
     }
 }
