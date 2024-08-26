@@ -32,6 +32,17 @@ public class Config {
             .header(CONFIG_HEADER).build();
 
 
+    private Commands commands = new Commands();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Commands {
+        private boolean main = true;
+        private boolean home = true;
+        private boolean reset = true;
+    }
+
     public static Config getInstance() {
         if (instance != null) {
             return instance;

@@ -31,15 +31,15 @@ public class Lang {
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
             .header(CONFIG_HEADER).build();
 
-// Permissions
 
     private Command command = new Command();
     @Getter
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Command {
-        public String noPermission = "&c&l(!) &fInsufficient Permission";
-        public String unknownArgs = "&c&l(!) &fUnknown Arguments.";
+        private String noPermission = "&c&l(!) &fInsufficient Permission";
+        private String unknownArgs = "&c&l(!) &fUnknown Arguments.";
+        private String disabled = "&c&l(!) &fCommand is disabled.";
 
         private Mine mine = new Mine();
         @Getter
