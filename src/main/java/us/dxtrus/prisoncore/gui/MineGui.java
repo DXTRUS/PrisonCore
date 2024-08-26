@@ -24,10 +24,10 @@ public class MineGui extends FastInvImproved {
         setItem(13, new ItemBuilder(Material.OAK_DOOR)
                 .name(StringUtil.tl(lang.getGotoMineItem()))
                 .build(), this::gotoMine);
-        setItem(15, new ItemBuilder(Material.END_CRYSTAL)
-                .name(StringUtil.tl(lang.getPrestigeMineItem()))
-                .lore(StringUtil.tl(lang.getPrestigeMineLore()).replace("{0}", "1"))
-                .build(), this::prestige);
+        //setItem(15, new ItemBuilder(Material.END_CRYSTAL)
+         //       .name(StringUtil.tl(lang.getPrestigeMineItem()))
+          //      .lore(StringUtil.tl(lang.getPrestigeMineLore()).replace("{0}", "1"))
+           //     .build(), this::prestige);
 
         // 21, 23
 
