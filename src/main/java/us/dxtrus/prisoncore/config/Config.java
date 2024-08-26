@@ -43,6 +43,10 @@ public class Config {
         private boolean reset = true;
     }
 
+    public static void reload() {
+        instance = YamlConfigurations.load(new File(PrisonCore.getInstance().getDataFolder(), "config.yml").toPath(), Config.class, PROPERTIES);
+    }
+
     public static Config getInstance() {
         if (instance != null) {
             return instance;

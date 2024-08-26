@@ -71,7 +71,9 @@ public class Lang {
         }
     }
 
-//
+    public static void reload() {
+        instance = YamlConfigurations.load(new File(PrisonCore.getInstance().getDataFolder(), "lang.yml").toPath(), Lang.class, PROPERTIES);
+    }
 
     public static Lang getInstance() {
         if (instance != null) {
