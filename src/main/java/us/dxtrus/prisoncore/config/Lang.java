@@ -32,6 +32,8 @@ public class Lang {
             .header(CONFIG_HEADER).build();
 
 
+    private String prefix = "&#9555ff&lMINE &8&l»&r";
+
     private Command command = new Command();
     @Getter
     @Configuration
@@ -47,8 +49,8 @@ public class Lang {
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class Mine {
             private String guiTitle = "Mine Options";
-            private String teleport = "&#9555ff&lMINE &8&l»&r Teleporting to mine...";
-            private String reset = "&#9555ff&lMINE &8&l»&r Resetting mine...";
+            private String teleport = "{prefix} Teleporting to mine...";
+            private String reset = "{prefix} Resetting mine...";
 
 
             private String gotoMineItem = "&aGo to Mine";
