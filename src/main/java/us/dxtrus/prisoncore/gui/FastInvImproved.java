@@ -36,7 +36,7 @@ public abstract class FastInvImproved extends FastInv {
     private Material fillerMaterial = Material.AIR;
 
     public void fill() {
-        ItemStack filler = new ItemBuilder(fillerMaterial).name(ChatColor.translateAlternateColorCodes('&', "&f ")).build();
+        ItemStack filler = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(ChatColor.translateAlternateColorCodes('&', "&f ")).build();
         ItemStack filler2 = new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name(ChatColor.translateAlternateColorCodes('&', "&f ")).build();
         for (int i = 0; i < this.getInventory().getSize(); i++) {
             if (getInventory().getItem(i) != null) {

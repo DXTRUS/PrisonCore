@@ -16,18 +16,27 @@ public class MineGui extends FastInvImproved {
         super(StringUtil.guiRows(5), title);
 
         setFillerMaterial(Material.GRAY_STAINED_GLASS_PANE).fill();
+        Lang.Command.Mine lang = Lang.getInstance().getCommand().getMine();
 
         setItem(11, new ItemBuilder(Material.EMERALD_BLOCK)
-                .name(StringUtil.tl(Lang.getInstance().getCommand().getMine().getResetMineItem()))
+                .name(StringUtil.tl(lang.getResetMineItem()))
                 .build(), this::resetMine);
         setItem(13, new ItemBuilder(Material.OAK_DOOR)
-                .name(StringUtil.tl(Lang.getInstance().getCommand().getMine().getGotoMineItem()))
+                .name(StringUtil.tl(lang.getGotoMineItem()))
                 .build(), this::gotoMine);
+        setItem(15, new ItemBuilder(Material.END_CRYSTAL)
+                .name(StringUtil.tl(lang.getPrestigeMineItem()))
+                .lore(StringUtil.tl(lang.getPrestigeMineLore()).replace("{0}", "1"))
+                .build(), this::prestige);
+
+        // 21, 23
+
+
 
 
         setItem(31, new ItemBuilder(Material.COAL_ORE)
-                .name(StringUtil.tl(Lang.getInstance().getCommand().getMine().getPickBlocksItem()))
-                .lore(StringUtil.tl(Lang.getInstance().getCommand().getMine().getPickBlocksLore()))
+                .name(StringUtil.tl(lang.getPickBlocksItem()))
+                .lore(StringUtil.tl(lang.getPickBlocksLore()))
                 .build(), this::pickBlockGui);
     }
 
@@ -45,7 +54,17 @@ public class MineGui extends FastInvImproved {
         event.getWhoClicked().closeInventory();
     }
 
+    void prestige(InventoryClickEvent event) {
+        // TODO: Add confirmation for prestige
+    }
+
     void pickBlockGui(InventoryClickEvent event) {
+        /*
+            // TODO:
+            Open block GUI if level>= max decided level,
+            If not, send message and close gui
+         */
+
 
     }
 

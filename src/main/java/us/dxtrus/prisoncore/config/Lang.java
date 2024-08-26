@@ -54,6 +54,9 @@ public class Lang {
             private String gotoMineItem = "&aGo to Mine";
             private String resetMineItem = "&f&lReset Mine";
 
+            private String prestigeMineItem = "&8&l&k||| &c&lPrestige &8&l&k|||";
+            private String prestigeMineLore = "&7Progress to prestige &c{0}";
+
             private String pickBlocksItem = "&6&lPick Blocks";
             private String pickBlocksLore = "&cRequires Level: 1234";
         }
