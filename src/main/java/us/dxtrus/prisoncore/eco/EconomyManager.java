@@ -26,11 +26,6 @@ public class EconomyManager {
     private static Map<UUID, Tokens> tokens = new HashMap<>();
 
     public static Tokens getTokens(UUID uuid) {
-
         return tokens.containsKey(uuid) ? tokens.get(uuid) : tokens.put(uuid, new Tokens(uuid));
-    }
-
-    public static void registerPapi() {
-
     }
 }

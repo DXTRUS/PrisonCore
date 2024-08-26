@@ -25,6 +25,10 @@ public class PlaceholderTokens extends PlaceholderExpansion {
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
         if (params.equalsIgnoreCase("tokens")) {
             EconomyManager.Tokens tokens = EconomyManager.getTokens(player.getUniqueId());
+            if (tokens.getCount().intValue() == 0) {
+                return "0";
+            }
+
             return formatBigInteger(tokens.getCount());
         }
 
