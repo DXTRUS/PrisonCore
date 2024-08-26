@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import us.dxtrus.commons.command.BukkitCommand;
 import us.dxtrus.commons.command.BukkitCommandManager;
 import us.dxtrus.commons.gui.FastInvManager;
+import us.dxtrus.prisoncore.commands.AdminCommand;
 import us.dxtrus.prisoncore.commands.CommandMine;
 import us.dxtrus.prisoncore.eco.EconomyManager;
 import us.dxtrus.prisoncore.eco.papi.PlaceholderTokens;
@@ -32,7 +33,8 @@ public final class PrisonCore extends JavaPlugin implements Listener {
         FastInvManager.register(this);
 
         Stream.of(
-                new CommandMine(this)
+                new CommandMine(this),
+                new AdminCommand(this)
         ).forEach(BukkitCommandManager.getInstance()::registerCommand);
 
         new PlaceholderTokens().register();

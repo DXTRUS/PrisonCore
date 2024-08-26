@@ -37,9 +37,9 @@ public class Lang {
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Command {
-        private String noPermission = "&c&l(!) &fInsufficient Permission";
-        private String unknownArgs = "&c&l(!) &fUnknown Arguments.";
-        private String disabled = "&c&l(!) &fCommand is disabled.";
+        private String noPermission = "&c&l(!)&r &fInsufficient Permission";
+        private String unknownArgs = "&c&l(!)&r &fUnknown Arguments.";
+        private String disabled = "&c&l(!)&r &fCommand is disabled.";
 
         private Mine mine = new Mine();
         @Getter

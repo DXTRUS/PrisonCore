@@ -14,7 +14,7 @@ public class ResetMineCommand extends BasicSubCommand {
     }
     @Override
     public void execute(CommandUser commandUser, String[] strings) {
-        if (Config.getInstance().getCommands().isReset()) {
+        if (!Config.getInstance().getCommands().isReset()) {
             MessageUtils.send(commandUser.getAudience(), Lang.getInstance().getCommand().getDisabled());
             return;
         }

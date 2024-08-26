@@ -15,7 +15,7 @@ public class MineHomeCommand extends BasicSubCommand {
 
     @Override
     public void execute(CommandUser commandUser, String[] strings) {
-        if (Config.getInstance().getCommands().isHome()) {
+        if (!Config.getInstance().getCommands().isHome()) {
             MessageUtils.send(commandUser.getAudience(), Lang.getInstance().getCommand().getDisabled());
             return;
         }

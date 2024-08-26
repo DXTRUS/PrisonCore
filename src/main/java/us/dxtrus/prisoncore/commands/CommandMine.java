@@ -32,7 +32,7 @@ public class CommandMine extends BukkitCommand {
             return;
         }
 
-        if (Config.getInstance().getCommands().isMain()) {
+        if (!Config.getInstance().getCommands().isMain()) {
             MessageUtils.send(commandUser.getAudience(), Lang.getInstance().getCommand().getDisabled());
             return;
         }
