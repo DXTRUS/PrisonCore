@@ -11,6 +11,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import us.dxtrus.commons.command.BukkitCommand;
+import us.dxtrus.commons.command.BukkitCommandManager;
 import us.dxtrus.commons.gui.FastInvManager;
 import us.dxtrus.prisoncore.commands.CommandMine;
 import us.dxtrus.prisoncore.eco.EconomyManager;
@@ -18,9 +20,9 @@ import us.dxtrus.prisoncore.eco.papi.PlaceholderTokens;
 import us.dxtrus.prisoncore.util.StringUtil;
 
 import java.math.BigInteger;
+import java.util.stream.Stream;
 
 public final class PrisonCore extends JavaPlugin implements Listener {
-
     @Getter private static PrisonCore instance;
 
     @Override
@@ -28,14 +30,17 @@ public final class PrisonCore extends JavaPlugin implements Listener {
         instance = this;
 
         FastInvManager.register(this);
-        getCommand("mine").setExecutor(new CommandMine());
+
+        Stream.of(
+                new CommandMine(this)
+        ).forEach(BukkitCommandManager.getInstance()::registerCommand);
 
         new PlaceholderTokens().register();
         Bukkit.getPluginManager().registerEvents(this, this);
     }
 
 //    ECONOMY
-
+    // todo: move this to a listeners class
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         if (!event.getBlock().getType().equals(Material.AMETHYST_BLOCK)  || !event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {

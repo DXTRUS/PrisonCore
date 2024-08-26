@@ -31,17 +31,6 @@ public class Config {
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
             .header(CONFIG_HEADER).build();
 
-// Permissions
-
-    private Permissions permissions = new Permissions();
-    @Getter
-    @Configuration
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Permissions {
-        public String mineAdmin = "prison.admin.mine";
-    }
-
-//
 
     public static Config getInstance() {
         if (instance != null) {
