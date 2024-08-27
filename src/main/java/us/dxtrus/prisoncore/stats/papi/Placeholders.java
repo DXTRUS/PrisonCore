@@ -25,6 +25,10 @@ public class Placeholders extends PlaceholderExpansion {
 
     @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
+        if (player == null) {
+            return "???";
+        }
+
         if (params.equalsIgnoreCase("tokens")) {
             StatsManager.Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
             if (stats == null) {

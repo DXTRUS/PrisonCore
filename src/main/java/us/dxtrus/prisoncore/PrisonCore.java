@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.dxtrus.scoreboard.DexterousBoard;
 import org.bukkit.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import us.dxtrus.commons.command.BukkitCommandManager;
 import us.dxtrus.commons.gui.FastInvManager;
+import us.dxtrus.commons.utils.TaskManager;
 import us.dxtrus.prisoncore.commands.AdminCommand;
 import us.dxtrus.prisoncore.commands.CommandMine;
 import us.dxtrus.prisoncore.mine.Mine;
@@ -32,10 +34,9 @@ public final class PrisonCore extends JavaPlugin implements Listener {
     @Getter private static PrisonCore instance;
     @Getter private Random random;
 
-    @Getter private Mine debugMine;
-    private Jackhammer jackhammer;
-
     ////////// DEBUG UUID 5f087be3-d369-4a5a-b9e2-6ae48affb534
+    @Getter private Mine debugMine;
+    private Jackhammer debugJackhammer;
     private UUID debugUUID = UUID.fromString("5f087be3-d369-4a5a-b9e2-6ae48affb534");
 
     @Override
@@ -58,7 +59,7 @@ public final class PrisonCore extends JavaPlugin implements Listener {
 
         debugMine = new Mine(debugUUID, debugWorld.getUID(), topLeft.toVector(), bottomRight.toVector(), new Vector(135, 55, 0), new Vector(0,0,0));
         debugMine.init();
-        jackhammer = new Jackhammer(debugMine);
+        debugJackhammer = new Jackhammer(debugMine);
     }
 
 
@@ -88,7 +89,7 @@ public final class PrisonCore extends JavaPlugin implements Listener {
             stats.giveGems(random.nextInt(10) + 1);
         }
 
-        if (jackhammer.proc()) {
+        if (debugJackhammer.proc()) {
             Location tl = debugMine.getBounds().getLowerNE();
             tl = tl.clone();
             tl.setY(event.getBlock().getY());
@@ -112,6 +113,7 @@ public final class PrisonCore extends JavaPlugin implements Listener {
             event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST_FAR, 1f, 1f);
         }
 
+        TaskManager.runAsync(this, () -> DexterousBoard.getInstance().getManager().getScoreboard(event.getPlayer()).update());
         event.getPlayer().sendActionBar(PlaceholderAPI.setPlaceholders(event.getPlayer(), StringUtil.tl("&c" + String.format("%.2f", debugMine.percentageBroken()) + " (" + debugMine.getBroken() + " / " + debugMine.getTotal() + ")")));
     }
 
@@ -124,7 +126,7 @@ public final class PrisonCore extends JavaPlugin implements Listener {
             this.mine = mine;
         }
 
-        private double procChance = 0.04d, procAltChance = 0.1;
+        private double procChance = 0.03d, procAltChance = 0.1;
 
         public boolean proc() {
             return mine.getSeed().nextDouble() <= procChance;

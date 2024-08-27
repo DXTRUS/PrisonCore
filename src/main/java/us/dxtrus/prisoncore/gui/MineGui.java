@@ -34,7 +34,7 @@ public class MineGui extends FastInvImproved {
 
 
 
-        setItem(31, new ItemBuilder(Material.COAL_ORE)
+        setItem(31, new ItemBuilder(Material.DIAMOND_BLOCK)
                 .name(StringUtil.tl(lang.getPickBlocksItem()))
                 .lore(StringUtil.tl(lang.getPickBlocksLore()))
                 .build(), this::pickBlockGui);

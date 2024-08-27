@@ -43,6 +43,19 @@ public class Config {
         private boolean reset = true;
     }
 
+    private Sql sql = new Sql();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Sql {
+        private String host = "127.0.0.1";
+        private int port = 3306;
+        private String password = "root";
+        private String username = "root";
+        private String database = "prisoncore";
+    }
+
     public static void reload() {
         instance = YamlConfigurations.load(new File(PrisonCore.getInstance().getDataFolder(), "config.yml").toPath(), Config.class, PROPERTIES);
     }

@@ -61,13 +61,9 @@ public class Mine {
     public void init() {
         PrisonCore.getInstance().getLogger().info("Initialising mine for uuid " + owner + " (World UUID: " + worldUuid + ")");
 
-        //materials.add(new MineMaterial(10d, Material.STONE));
-        //materials.add(new MineMaterial(60d, Material.COBBLESTONE));
-        materials.add(new MineMaterial(100d, Material.PURPUR_BLOCK));
-        //materials.add(new MineMaterial(30d, Material.GOLD_BLOCK));
-       // materials.add(new MineMaterial(5d, Material.DIAMOND_BLOCK));
-        //materials.add(new MineMaterial(3d, Material.EMERALD_BLOCK));
-       // materials.add(new MineMaterial(2d, Material.NETHERITE_BLOCK));
+        materials.add(new MineMaterial(75d, Material.NETHERITE_BLOCK));
+        materials.add(new MineMaterial(20d, Material.ANCIENT_DEBRIS));
+        materials.add(new MineMaterial(5d, Material.BLACK_CONCRETE));
         this.random = RandomSelector.weighted(materials, (material) -> material.percentage());
 
         reset();
