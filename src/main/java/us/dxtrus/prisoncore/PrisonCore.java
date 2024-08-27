@@ -14,6 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import us.dxtrus.commons.command.BukkitCommand;
 import us.dxtrus.commons.command.BukkitCommandManager;
 import us.dxtrus.commons.gui.FastInvManager;
+import us.dxtrus.commons.loader.LogManager;
+import us.dxtrus.commons.utils.BungeeMessenger;
 import us.dxtrus.prisoncore.commands.AdminCommand;
 import us.dxtrus.prisoncore.commands.CommandMine;
 import us.dxtrus.prisoncore.eco.EconomyManager;
@@ -21,10 +23,14 @@ import us.dxtrus.prisoncore.eco.papi.PlaceholderTokens;
 import us.dxtrus.prisoncore.util.StringUtil;
 
 import java.math.BigInteger;
+import java.util.Random;
 import java.util.stream.Stream;
 
+@Getter
 public final class PrisonCore extends JavaPlugin implements Listener {
     @Getter private static PrisonCore instance;
+    private final Random random = new Random(System.currentTimeMillis());
+    private final BungeeMessenger messenger = new BungeeMessenger(this);
 
     @Override
     public void onEnable() {
