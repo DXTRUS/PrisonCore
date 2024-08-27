@@ -3,7 +3,6 @@ package us.dxtrus.prisoncore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.dxtrus.scoreboard.DexterousBoard;
 import org.bukkit.*;
@@ -15,14 +14,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import us.dxtrus.commons.command.BukkitCommandManager;
 import us.dxtrus.commons.gui.FastInvManager;
+import us.dxtrus.commons.utils.StringUtils;
 import us.dxtrus.commons.utils.TaskManager;
 import us.dxtrus.prisoncore.commands.AdminCommand;
 import us.dxtrus.prisoncore.commands.CommandMine;
 import us.dxtrus.prisoncore.mine.Mine;
+import us.dxtrus.prisoncore.stats.Statistics;
 import us.dxtrus.prisoncore.stats.StatsManager;
 import us.dxtrus.prisoncore.stats.papi.Placeholders;
 import us.dxtrus.prisoncore.util.Cuboid;
-import us.dxtrus.prisoncore.util.StringUtil;
 import us.dxtrus.prisoncore.util.Util;
 
 import java.math.BigDecimal;
@@ -53,6 +53,8 @@ public final class PrisonCore extends JavaPlugin implements Listener {
         new Placeholders().register();
         Bukkit.getPluginManager().registerEvents(this, this);
 
+//        DEBUG
+
         World debugWorld = Bukkit.getWorld("world");
         Location topLeft = new Location(debugWorld, 189f, 54f, 23f);
         Location bottomRight = new Location(debugWorld, 144f, -29f, -22f);
@@ -64,7 +66,7 @@ public final class PrisonCore extends JavaPlugin implements Listener {
 
 
 //    ECONOMY
-    // todo: move this to a listeners class
+    // todo: remove this. its debug code
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         if (!debugMine.getBounds().contains(event.getBlock()) || !event.getPlayer().getGameMode().equals(GameMode.SURVIVAL)) {
@@ -76,11 +78,15 @@ public final class PrisonCore extends JavaPlugin implements Listener {
             return;
         }
 
+        if (!event.getPlayer().getAllowFlight()) {
+            event.getPlayer().setAllowFlight(true);
+        }
+
         if (random == null) {
             random = new Random();
         }
 
-        StatsManager.Statistics stats =  StatsManager.getInstance().getStatistics(event.getPlayer().getUniqueId());
+        Statistics stats =  StatsManager.getInstance().getStatistics(event.getPlayer().getUniqueId());
         stats.giveTokens(new BigDecimal(String.valueOf(random.nextInt(50000) + 1)));
         stats.incrementBrokenBlocks();
         debugMine.incrementBroken();
@@ -114,7 +120,8 @@ public final class PrisonCore extends JavaPlugin implements Listener {
         }
 
         TaskManager.runAsync(this, () -> DexterousBoard.getInstance().getManager().getScoreboard(event.getPlayer()).update());
-        event.getPlayer().sendActionBar(PlaceholderAPI.setPlaceholders(event.getPlayer(), StringUtil.tl("&c" + String.format("%.2f", debugMine.percentageBroken()) + " (" + debugMine.getBroken() + " / " + debugMine.getTotal() + ")")));
+        //event.getPlayer().sendActionBar(PlaceholderAPI.setPlaceholders(event.getPlayer(), StringUtil.tl("&c" + String.format("%.2f", debugMine.percentageBroken()) + " (" + debugMine.getBroken() + " / " + debugMine.getTotal() + ")")));
+        event.getPlayer().sendActionBar(StringUtils.modernMessage(PlaceholderAPI.setPlaceholders(event.getPlayer(), "&e⛃ " + stats.getTokens().toString() + " (⛃ %prisoncore_tokens%)")));
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)

@@ -27,32 +27,5 @@ public class StatsManager {
         return instance == null ? instance = new StatsManager() : instance;
     }
 
-    @Getter
-    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    public class Statistics {
-        private final UUID uuid;
-        private BigDecimal tokens = new BigDecimal("0");
-        private BigDecimal gems = new BigDecimal("0");
-        private BigDecimal blocksBroken = new BigDecimal("0");
 
-        public void giveTokens(BigDecimal amount) {
-            tokens = tokens.add(amount);
-        }
-
-        public void giveTokens(long amount) {
-            giveTokens(new BigDecimal(String.valueOf(amount)));
-        }
-
-        public void giveGems(BigDecimal amount) {
-            gems = gems.add(amount);
-        }
-
-        public void giveGems(long amount) {
-            giveGems(new BigDecimal(String.valueOf(amount)));
-        }
-
-        public void incrementBrokenBlocks() {
-            blocksBroken = blocksBroken.add(new BigDecimal("1"));
-        }
-    }
 }

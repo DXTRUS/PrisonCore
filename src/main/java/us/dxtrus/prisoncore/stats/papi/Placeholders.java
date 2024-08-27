@@ -79,22 +79,18 @@ public class Placeholders extends PlaceholderExpansion {
 
     public static String formatBigInteger(BigDecimal value, boolean formatDecimals) {
         int suffixIndex = 0;
-        BigDecimal remainder = BigDecimal.ZERO;
 
         while (value.compareTo(THOUSAND) >= 0 && suffixIndex < SUFFIXES.length - 1) {
-            remainder = value.remainder(THOUSAND);
             value = value.divide(THOUSAND);
             suffixIndex++;
         }
 
-        return formatWithSuffix(value, remainder, SUFFIXES[suffixIndex], formatDecimals);
+        return formatWithSuffix(value, SUFFIXES[suffixIndex], formatDecimals);
     }
 
-    private static String formatWithSuffix(BigDecimal value, BigDecimal remainder, String suffix, boolean formatDecimals) {
+    private static String formatWithSuffix(BigDecimal value, String suffix, boolean formatDecimals) {
         DecimalFormat df = new DecimalFormat(formatDecimals ? "#.00" : "#.##");
-        BigDecimal formatted = value.add(remainder.divide(new BigDecimal("1000"), RoundingMode.DOWN));
-
-        //double formattedValue = value.doubleValue() + remainder.doubleValue() / 1000.0;
-        return df.format(formatted) + suffix;
+        // Format the value directly, no remainder added back.
+        return df.format(value) + suffix;
     }
 }
