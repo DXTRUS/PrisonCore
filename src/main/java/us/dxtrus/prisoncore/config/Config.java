@@ -86,17 +86,10 @@ public class Config {
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Redis {
-        @Comment("Allowed: MYSQL")
-        private DatabaseType type = DatabaseType.MYSQL;
-
         private String host = "localhost";
         private int port = 3306;
-        private String database = "PrisonCore";
-        private String username = "root";
         private String password = "";
-        private boolean useSSL = false;
     }
-
 
     public static void reload() {
         instance = YamlConfigurations.load(new File(PrisonCore.getInstance().getDataFolder(), "config.yml").toPath(), Config.class, PROPERTIES);
