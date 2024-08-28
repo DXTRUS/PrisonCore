@@ -9,7 +9,7 @@ import us.dxtrus.commons.shaded.hikari.HikariDataSource;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.stats.Statistics;
-import us.dxtrus.prisoncore.storage.doas.DaoStatictics;
+import us.dxtrus.prisoncore.storage.daos.DaoStatistics;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -109,7 +109,7 @@ public class MySQLHandler implements DatabaseHandler {
     }
 
     public void registerDaos() {
-        daos.put(Statistics.class, new DaoStatictics(dataSource));
+        daos.put(Statistics.class, new DaoStatistics(dataSource));
     }
 
     @Override

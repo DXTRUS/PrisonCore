@@ -1,4 +1,4 @@
-package us.dxtrus.prisoncore.storage.doas;
+package us.dxtrus.prisoncore.storage.daos;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
@@ -18,7 +18,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
-public class DaoStatictics implements Dao<Statistics> {
+public class DaoStatistics implements Dao<Statistics> {
     private final HikariDataSource dataSource;
 
     @Override
