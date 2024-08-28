@@ -1,8 +1,5 @@
 package us.dxtrus.prisoncore.mine.network.broker;
 
-import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.utils.TaskManager;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
@@ -12,8 +9,10 @@ import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisException;
 import redis.clients.jedis.util.Pool;
-
-import java.util.logging.Level;
+import us.dxtrus.commons.utils.TaskManager;
+import us.dxtrus.prisoncore.PrisonCore;
+import us.dxtrus.prisoncore.config.Config;
+import us.dxtrus.prisoncore.util.LogUtil;
 
 /**
  * Redis Broker
@@ -22,7 +21,7 @@ import java.util.logging.Level;
 public final class RedisBroker extends Broker {
     private final Subscriber subscriber;
 
-    public RedisBroker(@NotNull Fadah plugin) {
+    public RedisBroker(@NotNull PrisonCore plugin) {
         super(plugin);
         this.subscriber = new Subscriber(this);
     }
@@ -45,7 +44,7 @@ public final class RedisBroker extends Broker {
 
     @Override
     protected void send(@NotNull Message message) {
-        TaskManager.Async.run(plugin, () -> subscriber.send(message));
+        TaskManager.runAsync(plugin, () -> subscriber.send(message));
     }
 
     @Override
@@ -56,9 +55,10 @@ public final class RedisBroker extends Broker {
 
     @NotNull
     private static Pool<Jedis> getJedisPool() {
-        final String password = Config.REDIS_PASSWORD.toString();
-        final String host = Config.REDIS_HOST.toString();
-        final int port = Config.REDIS_PORT.toInteger();
+        Config.Redis redisConfig = Config.getInstance().getRedis();
+        final String password = redisConfig.getPassword();
+        final String host = redisConfig.getHost();
+        final int port = redisConfig.getPort();
 
         final JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxIdle(0);
@@ -101,7 +101,7 @@ public final class RedisBroker extends Broker {
         @Blocking
         public void send(@NotNull Message message) {
             try (Jedis jedis = jedisPool.getResource()) {
-                jedis.publish(Config.REDIS_CHANNEL.toString(), broker.gson.toJson(message));
+                jedis.publish("prisoncore.broker", broker.gson.toJson(message));
             }
         }
 
@@ -110,10 +110,10 @@ public final class RedisBroker extends Broker {
             while (enabled && !Thread.interrupted() && jedisPool != null && !jedisPool.isClosed()) {
                 try (Jedis jedis = jedisPool.getResource()) {
                     if (reconnected) {
-                        Fadah.getConsole().info("Redis connection is alive again");
+                        LogUtil.info("Redis connection is alive again");
                     }
 
-                    jedis.subscribe(this, Config.REDIS_CHANNEL.toString());
+                    jedis.subscribe(this, "prisoncore.broker");
                 } catch (Throwable t) {
                     onThreadUnlock(t);
                 }
@@ -126,7 +126,7 @@ public final class RedisBroker extends Broker {
             }
 
             if (reconnected) {
-                Fadah.getConsole().log(Level.WARNING, "Redis Server connection lost. Attempting reconnect in %ss..."
+                LogUtil.warn("Redis Server connection lost. Attempting reconnect in %ss..."
                         .formatted(RECONNECTION_TIME / 1000), t);
             }
             try {
@@ -147,14 +147,14 @@ public final class RedisBroker extends Broker {
 
         @Override
         public void onMessage(@NotNull String channel, @NotNull String encoded) {
-            if (!channel.equals(Config.REDIS_CHANNEL.toString())) {
+            if (!channel.equals("prisoncore.broker")) {
                 return;
             }
             final Message message;
             try {
                 message = broker.gson.fromJson(encoded, Message.class);
             } catch (Exception e) {
-                Fadah.getConsole().warning("Failed to decode message from Redis: " + e.getMessage());
+                LogUtil.warn("Failed to decode message from Redis: " + e.getMessage());
                 return;
             }
 

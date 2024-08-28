@@ -16,7 +16,7 @@ public interface Mine extends DatabaseObject {
     int getSize();
 
     void setLoaded(boolean loaded);
-    void setServer(String server);
+    void setServer(Server server);
     void setNpcLocation(LocRef npc);
     void setSize(int size);
 }

@@ -8,8 +8,12 @@ import com.infernalsuite.aswm.api.loaders.SlimeLoader;
 import com.infernalsuite.aswm.api.world.SlimeWorld;
 import com.infernalsuite.aswm.api.world.properties.SlimeProperties;
 import com.infernalsuite.aswm.api.world.properties.SlimePropertyMap;
+import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.mine.loader.LoaderManager;
 import us.dxtrus.prisoncore.mine.models.Mine;
+import us.dxtrus.prisoncore.mine.network.broker.Message;
+import us.dxtrus.prisoncore.mine.network.broker.Payload;
+import us.dxtrus.prisoncore.mine.network.broker.Response;
 
 import java.io.IOException;
 
@@ -42,8 +46,9 @@ public class LocalMineManager {
     /**
      * Loads a mine on this server.
      * @param mine the mine to load
+     * @return the update mine object
      */
-    public void load(Mine mine) {
+    public Mine load(Mine mine) {
         SlimePropertyMap temp = SLIME_PROPERTY_MAP.clone();
         temp.setValue(SlimeProperties.SPAWN_X, (int) mine.getSpawnLocation().getX());
         temp.setValue(SlimeProperties.SPAWN_Y, (int) mine.getSpawnLocation().getY());
@@ -51,14 +56,27 @@ public class LocalMineManager {
         try {
             SlimeWorld world = swmApi.readWorld(swmLoader, mine.getWorldName(), false, temp);
         } catch (UnknownWorldException e) {
-
+            Message.builder()
+                    .type(Message.Type.MINE_LOAD_RESPONSE)
+                    .payload(Payload.withResponse(Response.FAIL_NO_WORLD))
+                    .build().send(PrisonCore.getInstance().getBroker());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Message.builder()
+                    .type(Message.Type.MINE_LOAD_RESPONSE)
+                    .payload(Payload.withResponse(Response.FAIL_GENERIC))
+                    .build().send(PrisonCore.getInstance().getBroker());
         } catch (CorruptedWorldException e) {
-            throw new RuntimeException(e);
+            Message.builder()
+                    .type(Message.Type.MINE_LOAD_RESPONSE)
+                    .payload(Payload.withResponse(Response.FAIL_CORRUPTED))
+                    .build().send(PrisonCore.getInstance().getBroker());
         } catch (NewerFormatException e) {
-            throw new RuntimeException(e);
+            Message.builder()
+                    .type(Message.Type.MINE_LOAD_RESPONSE)
+                    .payload(Payload.withResponse(Response.FAIL_OLD))
+                    .build().send(PrisonCore.getInstance().getBroker());
         }
+        return mine;
     }
 
     public static LocalMineManager getInstance() {

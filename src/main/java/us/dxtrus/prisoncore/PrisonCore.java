@@ -20,6 +20,8 @@ import us.dxtrus.prisoncore.commands.AdminCommand;
 import us.dxtrus.prisoncore.commands.CommandMine;
 import us.dxtrus.prisoncore.eco.EconomyManager;
 import us.dxtrus.prisoncore.eco.papi.PlaceholderTokens;
+import us.dxtrus.prisoncore.mine.network.broker.Broker;
+import us.dxtrus.prisoncore.mine.network.broker.RedisBroker;
 import us.dxtrus.prisoncore.util.StringUtil;
 
 import java.math.BigInteger;
@@ -31,10 +33,13 @@ public final class PrisonCore extends JavaPlugin implements Listener {
     @Getter private static PrisonCore instance;
     private final Random random = new Random(System.currentTimeMillis());
     private final BungeeMessenger messenger = new BungeeMessenger(this);
+    private Broker broker;
 
     @Override
     public void onEnable() {
         instance = this;
+
+        broker = new RedisBroker(this);
 
         FastInvManager.register(this);
 

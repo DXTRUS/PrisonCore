@@ -18,17 +18,14 @@ public class Message {
     }
 
     public enum Type {
-        ISLAND_CREATE,
-        ISLAND_CREATE_RESPONSE,
+        MINE_CREATE,
+        MINE_CREATE_RESPONSE,
 
-        ISLAND_DELETE,
-        ISLAND_DELETE_RESPONSE,
+        MINE_LOAD,
+        MINE_LOAD_RESPONSE,
 
-        ISLAND_LOAD,
-        ISLAND_LOAD_RESPONSE,
-
-        ISLAND_UNLOAD,
-        ISLAND_UNLOAD_RESPONSE,
+        MINE_UNLOAD,
+        MINE_UNLOAD_RESPONSE,
 
         NOTIFICATION,
         BROADCAST,

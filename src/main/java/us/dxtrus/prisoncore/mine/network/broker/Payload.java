@@ -20,6 +20,14 @@ public class Payload {
     @Expose
     private Broadcast broadcast;
 
+    @Nullable
+    @Expose
+    private String string;
+
+    @Nullable
+    @Expose
+    public Response response;
+
     /**
      * Returns an empty cross-server message payload.
      *
@@ -70,6 +78,32 @@ public class Payload {
         return payload;
     }
 
+    /**
+     * Returns a payload containing a string.
+     *
+     * @param string the string
+     * @return a payload containing the string
+     */
+    @NotNull
+    public static Payload withString(@NotNull String string) {
+        final Payload payload = new Payload();
+        payload.string = string;
+        return payload;
+    }
+
+    /**
+     * Returns a payload containing a string.
+     *
+     * @param string the string
+     * @return a payload containing the string
+     */
+    @NotNull
+    public static Payload withResponse(@NotNull Response response) {
+        final Payload payload = new Payload();
+        payload.response = response;
+        return payload;
+    }
+
     public Optional<UUID> getUUID() {
         return Optional.ofNullable(uuid);
     }
@@ -79,4 +113,12 @@ public class Payload {
     }
 
     public Optional<Broadcast> getBroadcast() { return Optional.ofNullable(broadcast); }
+
+    public Optional<String> getString() {
+        return Optional.ofNullable(string);
+    }
+
+    public Optional<Response> getResponse() {
+        return Optional.ofNullable(response);
+    }
 }

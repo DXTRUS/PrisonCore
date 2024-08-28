@@ -1,4 +1,4 @@
-package us.dxtrus.prisoncore.mine.network.broker;
+package us.dxtrus.prisoncore.mine.network;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -9,17 +9,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPool;
+import us.dxtrus.commons.utils.TaskManager;
+import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.util.LogUtil;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 
 @Getter
 public final class HeartBeat {
+    private static HeartBeat instance;
     private final JavaPlugin plugin;
     private final JedisPool jedisPool;
-    private static Map<String, String> servers = new ConcurrentHashMap<>();
+    private Map<String, String> servers = new ConcurrentHashMap<>();
 
     private HeartBeat(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -37,7 +39,7 @@ public final class HeartBeat {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.ping();
         } catch (Exception e) {
-            Fadsb.getConsole().log(Level.SEVERE, "Failed to ping Redis server! (%s)".formatted(e.getMessage()), e);
+            LogUtil.severe("Failed to ping Redis server! (%s)".formatted(e.getMessage()), e);
         }
 
         startGet();
@@ -45,12 +47,12 @@ public final class HeartBeat {
     }
 
     private void startGet() {
-        TaskManager.Async.runTask(() -> {
+        TaskManager.runAsyncRepeat(plugin, () -> {
             try (Jedis jedis = jedisPool.getResource()) {
-                servers = jedis.hgetAll("skyblock-heartbeat");
+                servers = jedis.hgetAll("prisoncore:heartbeat");
                 servers.forEach((serverName, serverData) -> {
                     if (isOnline(serverName)) {
-                        jedis.hdel("skyblock-heartbeat", serverName);
+                        jedis.hdel("prisoncore:heartbeat", serverName);
                         servers.remove(serverName);
                     }
                 });
@@ -63,7 +65,7 @@ public final class HeartBeat {
     private void startPost() {
         long startTime = System.currentTimeMillis();
 
-        TaskManager.Async.runTask(() -> {
+        TaskManager.runAsyncRepeat(plugin, () -> {
             String currentServer = "config thing";
             double tps = Math.min(plugin.getServer().getTPS()[0], 20.0);
             double mspt = Math.round(plugin.getServer().getAverageTickTime() * 100.0) / 100.0;
@@ -81,14 +83,14 @@ public final class HeartBeat {
             String serverDataJson = serverData.toString();
 
             try (Jedis jedis = jedisPool.getResource()) {
-                jedis.hset("skyblock-heartbeat", currentServer, serverDataJson);
+                jedis.hset("prisoncore:heartbeat", currentServer, serverDataJson);
             } catch (Exception e) {
-                Fadsb.getConsole().log(Level.SEVERE, "Could not post server data to Redis! (%s)".formatted(e.getMessage()), e);
+                LogUtil.severe("Could not post server data to Redis! (%s)".formatted(e.getMessage()), e);
             }
         }, 20L);
     }
 
-    public static JsonObject getServerObject(String server) {
+    public JsonObject getServerObject(String server) {
         try {
             String jsonString = servers.get(server);
             if (jsonString != null) {
@@ -96,12 +98,12 @@ public final class HeartBeat {
             }
             return null;
         } catch (JsonSyntaxException e) {
-            Fadsb.getConsole().log(Level.SEVERE, "Error while parsing JSON! (%s)".formatted(e.getMessage()), e);
+            LogUtil.severe("Error while parsing JSON! (%s)".formatted(e.getMessage()), e);
         }
         return null;
     }
 
-    public static int getPlayerCount(String server) {
+    public int getPlayerCount(String server) {
         JsonObject serverObj = getServerObject(server);
         if (serverObj != null) {
             return Integer.parseInt(serverObj.get("onlinePlayers").toString());
@@ -109,7 +111,7 @@ public final class HeartBeat {
         return 0;
     }
 
-    public static double getTPS(String server) {
+    public double getTPS(String server) {
         JsonObject serverObj = getServerObject(server);
         if (serverObj != null) {
             return Double.parseDouble(serverObj.get("tps").toString());
@@ -117,7 +119,7 @@ public final class HeartBeat {
         return 00.0;
     }
 
-    public static double getMSPT(String server) {
+    public double getMSPT(String server) {
         JsonObject serverObj = getServerObject(server);
         if (serverObj != null) {
             return Double.parseDouble(serverObj.get("mspt").toString());
@@ -125,7 +127,7 @@ public final class HeartBeat {
         return 00.0;
     }
 
-    public static boolean isOnline(String server) {
+    public boolean isOnline(String server) {
         JsonObject serverObj = getServerObject(server);
         if (serverObj != null) {
             return getLastHeartbeat(server) >= System.currentTimeMillis() - 4000;
@@ -133,25 +135,25 @@ public final class HeartBeat {
         return false;
     }
 
-    public static long[] getOnlineTime(String server) {
-        JsonObject serverObj = getServerObject(server);
-        if (serverObj != null) {
-            long milliOnline = Long.parseLong(serverObj.get("lastHeartBeat").toString()) - Long.parseLong(serverObj.get("startTime").toString());
-            return TimeUtil.splitTime(milliOnline);
-        }
-        return new long[]{0, 0, 0, 0};
-    }
+//    public long[] getOnlineTime(String server) {
+//        JsonObject serverObj = getServerObject(server);
+//        if (serverObj != null) {
+//            long milliOnline = Long.parseLong(serverObj.get("lastHeartBeat").toString()) - Long.parseLong(serverObj.get("startTime").toString());
+//            return TimeUtil.splitTime(milliOnline);
+//        }
+//        return new long[]{0, 0, 0, 0};
+//    }
+//
+//    public String getFormattedOnlineTime(String server) {
+//        JsonObject serverObj = getServerObject(server);
+//        if (serverObj != null) {
+//            long milliOnline = Long.parseLong(serverObj.get("lastHeartBeat").toString()) - Long.parseLong(serverObj.get("startTime").toString());
+//            return TimeUtil.formatTimeSince(milliOnline);
+//        }
+//        return "0s";
+//    }
 
-    public static String getFormattedOnlineTime(String server) {
-        JsonObject serverObj = getServerObject(server);
-        if (serverObj != null) {
-            long milliOnline = Long.parseLong(serverObj.get("lastHeartBeat").toString()) - Long.parseLong(serverObj.get("startTime").toString());
-            return TimeUtil.formatTimeSince(milliOnline);
-        }
-        return "0s";
-    }
-
-    public static long getLastHeartbeat(String server) {
+    public long getLastHeartbeat(String server) {
         JsonObject serverObj = getServerObject(server);
         if (serverObj != null) {
             return Long.parseLong(serverObj.get("lastHeartBeat").toString());
@@ -159,11 +161,18 @@ public final class HeartBeat {
         return 0;
     }
 
-    public static long getStartTime(String server) {
+    public long getStartTime(String server) {
         JsonObject serverObj = getServerObject(server);
         if (serverObj != null) {
             return Long.parseLong(serverObj.get("startTime").toString());
         }
         return 0;
+    }
+
+    public static HeartBeat getInstance() {
+        if (instance == null) {
+            instance = new HeartBeat(PrisonCore.getInstance());
+        }
+        return instance;
     }
 }

@@ -1,5 +1,6 @@
 package us.dxtrus.prisoncore.mine.network;
 
+import lombok.Getter;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.mine.models.Server;
 
@@ -8,12 +9,13 @@ import java.util.List;
 
 public class ServerManager {
     private static ServerManager instance;
-    private final Heartbeat heartbeat;
+    @Getter
+    private final Server thisServer;
 
     private final List<Server> servers = new ArrayList<>();
 
     public ServerManager() {
-        this.heartbeat = new Heartbeat();
+        this.thisServer = new LocalServer();
     }
 
     public Server getRandomServer() {

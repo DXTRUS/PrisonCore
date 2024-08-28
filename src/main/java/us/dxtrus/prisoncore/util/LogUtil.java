@@ -16,7 +16,7 @@ public class LogUtil {
         logger.log(Level.WARNING, message);
     }
 
-    public static void warn(@NotNull String message, @NotNull Exception e) {
+    public static void warn(@NotNull String message, @NotNull Throwable e) {
         logger.log(Level.WARNING, message, e);
     }
 
@@ -24,7 +24,7 @@ public class LogUtil {
         logger.severe(message);
     }
 
-    public static void severe(@NotNull String message, @NotNull Exception e) {
+    public static void severe(@NotNull String message, @NotNull Throwable e) {
         logger.log(Level.SEVERE, message, e);
     }
 
