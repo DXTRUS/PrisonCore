@@ -4,11 +4,10 @@ package us.dxtrus.prisoncore.config;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.checkerframework.checker.units.qual.C;
 import us.dxtrus.commons.config.*;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.mines.network.loadbalancer.Distributor;
-import us.dxtrus.prisoncore.persist.DatabaseType;
+import us.dxtrus.prisoncore.storage.DatabaseType;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -49,8 +48,8 @@ public class Config {
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Storage {
-        @Comment("Allowed: MYSQL")
-        private DatabaseType type = DatabaseType.MYSQL;
+        @Comment("Allowed: MYSQL, MARIADB")
+        private DatabaseType type = DatabaseType.MARIADB;
 
         private String host = "localhost";
         private int port = 3306;

@@ -6,12 +6,10 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.dxtrus.prisoncore.config.Config;
-import us.dxtrus.prisoncore.persist.DatabaseType;
+import us.dxtrus.prisoncore.storage.DatabaseType;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Getter
 public class LoaderManager {
