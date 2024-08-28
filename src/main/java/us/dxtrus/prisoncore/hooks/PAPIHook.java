@@ -5,8 +5,8 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import us.dxtrus.prisoncore.statistics.Statistics;
-import us.dxtrus.prisoncore.statistics.StatsManager;
+import us.dxtrus.prisoncore.stats.Statistics;
+import us.dxtrus.prisoncore.stats.StatsManager;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;

@@ -1,9 +1,9 @@
-package us.dxtrus.prisoncore.storage;
+package us.dxtrus.prisoncore.storage.doas;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
 import us.dxtrus.commons.database.dao.Dao;
-import com.zaxxer.hikari.HikariDataSource;
+import us.dxtrus.commons.shaded.hikari.HikariDataSource;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.stats.Statistics;
 
@@ -19,14 +19,14 @@ import java.util.logging.Level;
 
 @RequiredArgsConstructor
 public class DaoStatictics implements Dao<Statistics> {
-    private final HikariDataSource dataSoruce;
+    private final HikariDataSource dataSource;
 
     @Override
     public Optional<Statistics> get(UUID uuid) {
         String sql = "SELECT * FROM statistics WHERE uuid = ? LIMIT 1;";
         Statistics statistics = null;
 
-        try (Connection connection = dataSoruce.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, uuid.toString());
             ResultSet results = statement.executeQuery();
 
@@ -58,7 +58,7 @@ public class DaoStatictics implements Dao<Statistics> {
     @Override
     public void save(Statistics statistics) {
         String sql = "INSERT INTO statistics (uuid, tokens, gems, blocks_broken) VALUES (?, ?, ?, ?);";
-        try (Connection connection = dataSoruce.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, statistics.getUuid().toString());
             statement.setString(2, statistics.getTokens().toString());
             statement.setString(3, statistics.getGems().toString());
@@ -74,7 +74,7 @@ public class DaoStatictics implements Dao<Statistics> {
     @Override
     public void update(Statistics statistics, String[] strings) {
         String sql = "UPDATE statistics SET tokens = ?, gems = ?, blocks_broken = ? WHERE uuid = " + statistics.getUuid().toString() + ";";
-        try (Connection connection = dataSoruce.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, statistics.getTokens().toString());
             statement.setString(2, statistics.getGems().toString());
             statement.setString(3, statistics.getBlocksBroken().toString());
