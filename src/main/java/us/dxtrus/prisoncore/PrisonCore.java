@@ -12,6 +12,7 @@ import us.dxtrus.prisoncore.commands.CommandMine;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.config.Lang;
 import us.dxtrus.prisoncore.hooks.PAPIHook;
+import us.dxtrus.prisoncore.listeners.MineListener;
 import us.dxtrus.prisoncore.listeners.PlayerListener;
 import us.dxtrus.prisoncore.mine.LocalMineManager;
 import us.dxtrus.prisoncore.mine.MineManager;
@@ -57,7 +58,8 @@ public final class PrisonCore extends JavaPlugin implements Listener {
         ).forEach(BukkitCommandManager.getInstance()::registerCommand);
 
         Stream.of(
-                new PlayerListener(this)
+                new PlayerListener(this),
+                new MineListener()
         ).forEach(e -> Bukkit.getPluginManager().registerEvents(e, this));
 
         new PAPIHook().register();

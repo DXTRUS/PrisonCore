@@ -44,6 +44,7 @@ public class TransferManager {
             jedis.hdel("prisoncore:transfers", player.getUniqueId().toString());
             PrivateMine mine = new PrivateMine(player.getUniqueId());
             player.teleportAsync(mine.getSpawnLocation().toBukkit(Bukkit.getWorld(mine.getWorldName()))).thenAccept(success -> {
+                player.setAllowFlight(true);
                 player.setFlying(true);
                 MessageUtils.send(player, Lang.getInstance().getCommand().getMine().getTeleportComplete());
             });
