@@ -3,10 +3,9 @@ package us.dxtrus.prisoncore.storage;
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
-import us.dxtrus.commons.database.DatabaseHandler;
 import us.dxtrus.commons.database.DatabaseObject;
 import us.dxtrus.commons.database.dao.Dao;
-import us.dxtrus.commons.shaded.HikariDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.stats.Statistics;
@@ -25,7 +24,7 @@ public class MySQLHandler {
     @Getter private boolean connected = false;
 
     private final String driverClass;
-    private HikariDataSource dataSource;
+    @Getter private HikariDataSource dataSource;
 
     public MySQLHandler() {
         this.driverClass = "org.mariadb.jdbc.Driver";

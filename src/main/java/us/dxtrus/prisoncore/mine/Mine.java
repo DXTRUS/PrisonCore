@@ -3,10 +3,7 @@ package us.dxtrus.prisoncore.mine;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +23,7 @@ import java.util.UUID;
 public class Mine {
     private Cuboid bounds;
     private UUID owner;
-    private UUID worldUuid;
+    private String worldUuid;
     private World world;
     private Vector spawn;
     private Vector mineCenter;
@@ -39,7 +36,7 @@ public class Mine {
 
     private double resetAtPercentageBroken = 0.80d;
 
-    public Mine(@NotNull UUID owner, @NotNull UUID world, @NotNull Vector topLeft, @NotNull Vector bottomRight, @NotNull Vector spawn, @NotNull Vector center) {
+    public Mine(@NotNull UUID owner, @NotNull String world, @NotNull Vector topLeft, @NotNull Vector bottomRight, @NotNull Vector spawn, @NotNull Vector center) {
         this.owner = owner;
         this.worldUuid = world;
         this.world = Bukkit.getWorld(world);
@@ -72,7 +69,7 @@ public class Mine {
     public void reset() {
         Bukkit.getOnlinePlayers().stream()
                 .filter(player -> bounds.contains(player.getLocation()))
-                .forEach(player -> player.teleport(new Location(world, spawn.getBlockX() + 0.5d, spawn.getBlockY(), spawn.getBlockZ() + 0.5d)));
+                .forEach(player -> player.teleport(new Location(world, spawn.getBlockX() + 0.5d, spawn.getBlockY() + 1, spawn.getBlockZ() + 0.5d, -90f, 0f)));
 
 
         bounds.forEach(block ->
@@ -87,7 +84,10 @@ public class Mine {
             return;
         }
 
-        who.teleport(new Location(world, spawn.getBlockX() + 0.5d, spawn.getBlockY(), spawn.getBlockZ() + 0.5d));
+
+        who.teleport(new Location(world, spawn.getBlockX() + 0.5d, spawn.getBlockY() + 1, spawn.getBlockZ() + 0.5d, -90f, 0f));
+        who.setGameMode(GameMode.SURVIVAL);
+        who.setAllowFlight(true);
     }
 
     public void incrementBroken() {
@@ -99,6 +99,18 @@ public class Mine {
         if ((double)broken / (double) total >= resetAtPercentageBroken) {
             reset();
         }
+    }
+
+    public Cuboid setWalls() {
+        Cuboid c = getBounds().outset(Cuboid.CuboidDirection.Both, 2);
+        c.getFace(Cuboid.CuboidDirection.Down).expand(Cuboid.CuboidDirection.Down, 1).forEach(block -> block.setType(Material.BEDROCK));
+        c.getFace(Cuboid.CuboidDirection.North).forEach(block -> block.setType(Material.BEDROCK));
+        c.getFace(Cuboid.CuboidDirection.East).forEach(block -> block.setType(Material.BEDROCK));
+        c.getFace(Cuboid.CuboidDirection.South).forEach(block -> block.setType(Material.BEDROCK));
+        c.getFace(Cuboid.CuboidDirection.West).forEach(block -> block.setType(Material.BEDROCK));
+
+        c.getFace(Cuboid.CuboidDirection.Up).expand(Cuboid.CuboidDirection.Up, 1).expand(Cuboid.CuboidDirection.Down, 1).forEach(block -> block.setType(Material.AIR));
+        return c;
     }
 
     public double percentageBroken() {

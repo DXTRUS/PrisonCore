@@ -3,7 +3,7 @@ package us.dxtrus.prisoncore.storage;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
 import us.dxtrus.commons.database.dao.Dao;
-import us.dxtrus.commons.shaded.HikariDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.stats.Statistics;
 

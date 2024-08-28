@@ -5,6 +5,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import us.dxtrus.prisoncore.stats.Statistics;
 import us.dxtrus.prisoncore.stats.StatsManager;
 
 import java.math.BigDecimal;
@@ -30,7 +31,7 @@ public class Placeholders extends PlaceholderExpansion {
         }
 
         if (params.equalsIgnoreCase("tokens")) {
-            StatsManager.Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
+            Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
             if (stats == null) {
                 return "0";
             }
@@ -43,7 +44,7 @@ public class Placeholders extends PlaceholderExpansion {
         }
 
         if (params.equalsIgnoreCase("gems")) {
-            StatsManager.Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
+            Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
             if (stats == null) {
                 return "0";
             }
@@ -56,7 +57,7 @@ public class Placeholders extends PlaceholderExpansion {
         }
 
         if (params.equalsIgnoreCase("blocks_broken")) {
-            StatsManager.Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
+            Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
             if (stats == null) {
                 return "0";
             }
@@ -68,7 +69,7 @@ public class Placeholders extends PlaceholderExpansion {
             return formatBigInteger(stats.getBlocksBroken(), false);
         }
 
-        return "&cNA&r";
+        return "&cN/A&r";
     }
 
     private static final String[] SUFFIXES = {
