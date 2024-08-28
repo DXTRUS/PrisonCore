@@ -29,7 +29,7 @@ public class ResetMineCommand extends BasicSubCommand {
             return;
         }
 
-        @NotNull Optional<UUID> optional = commandUser.getAudience().get(Identity.UUID);
+        Optional<UUID> optional = commandUser.getAudience().get(Identity.UUID);
         Player who = Bukkit.getPlayer(optional.get());
 
         Mine mine = SlimeManager.getInstance().getMine(who);
