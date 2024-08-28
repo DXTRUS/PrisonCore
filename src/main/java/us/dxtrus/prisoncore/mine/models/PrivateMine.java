@@ -57,6 +57,7 @@ public class PrivateMine implements PrivateWorld {
 
     public void connectLocal(Player player) {
         player.teleportAsync(this.getSpawnLocation().toBukkit(Bukkit.getWorld(this.getWorldName()))).thenAccept(success -> {
+            player.setFlying(true);
             MessageUtils.send(player, Lang.getInstance().getCommand().getMine().getTeleportComplete());
         });
     }

@@ -82,6 +82,7 @@ public class Lang {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Errors {
         private String worldNotFound = "{prefix} &cYour mine was not found! &7Creating a mine for you!";
+        private String worldNotFoundUnload = "{prefix} &cYour mine was not found!";
         private String worldCorrupted = "{prefix} &cYour mine is corrupted! &7Attempting to automatically fix this...";
         private String worldOldFormat = "{prefix} &cYour mine is outdated... &7Regenerating...";
         private String genericWorldError = "{prefix} &cAn unknown error has occurred with your mine! &7(Tracking Code: %s)";

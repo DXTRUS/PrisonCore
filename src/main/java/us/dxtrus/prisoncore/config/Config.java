@@ -4,14 +4,18 @@ package us.dxtrus.prisoncore.config;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.bukkit.Material;
 import us.dxtrus.commons.config.*;
 import us.dxtrus.prisoncore.PrisonCore;
+import us.dxtrus.prisoncore.mine.models.MineMaterial;
 import us.dxtrus.prisoncore.mine.network.loadbalancer.Distributor;
 import us.dxtrus.prisoncore.storage.DatabaseType;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Configuration
@@ -30,6 +34,16 @@ public class Config {
             .charset(StandardCharsets.UTF_8)
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
             .header(CONFIG_HEADER).build();
+
+    private Map<Integer, List<MineMaterial>> ranks = Map.of(0, List.of(
+            new MineMaterial(Material.NETHERITE_BLOCK, 80),
+            new MineMaterial(Material.ANCIENT_DEBRIS, 10),
+            new MineMaterial(Material.BLACK_CONCRETE, 10)
+    ),1, List.of(
+            new MineMaterial(Material.GREEN_CONCRETE, 80),
+            new MineMaterial(Material.SLIME_BLOCK, 10),
+            new MineMaterial(Material.LIME_TERRACOTTA, 10)
+    ));
 
     private Commands commands = new Commands();
 

@@ -9,6 +9,8 @@ import com.infernalsuite.aswm.api.world.SlimeWorld;
 import com.infernalsuite.aswm.api.world.properties.SlimeProperties;
 import com.infernalsuite.aswm.api.world.properties.SlimePropertyMap;
 import com.infernalsuite.aswm.loaders.mysql.MysqlLoader;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import us.dxtrus.commons.utils.TaskManager;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.config.Config;
@@ -81,6 +83,7 @@ public class LocalMineManager {
         temp.setValue(SlimeProperties.SPAWN_X, (int) mine.getSpawnLocation().getX());
         temp.setValue(SlimeProperties.SPAWN_Y, (int) mine.getSpawnLocation().getY());
         temp.setValue(SlimeProperties.SPAWN_Z, (int) mine.getSpawnLocation().getZ());
+
         try {
             SlimeWorld world;
             if (swmLoader.worldExists(mine.getWorldName())) {
@@ -92,7 +95,7 @@ public class LocalMineManager {
 
             TaskManager.runSync(PrisonCore.getInstance(), () -> {
                 swmApi.loadWorld(world, true);
-                mine.getLinkage().init();
+                mine.getLinkage().reset();
 
                 TaskManager.runAsync(PrisonCore.getInstance(), () ->
                         Message.builder()
@@ -130,6 +133,23 @@ public class LocalMineManager {
                     .build().send(PrisonCore.getInstance().getBroker());
             throw new RuntimeException("IOException on world %s tracking code %s".formatted(mine.getWorldName(), trackingCode), e);
         }
+    }
+
+    public void unload(PrivateMine mine) {
+        World world = Bukkit.getWorld(mine.getWorldName());
+        if (world == null) {
+            String trackingCode = StringUtil.getRandomString(6);
+            Message.builder()
+                    .type(Message.Type.MINE_UNLOAD_RESPONSE)
+                    .payload(Payload.withResponse(new Response(ResponseType.FAIL_NO_WORLD, mine.getWorldName(), trackingCode)))
+                    .build().send(PrisonCore.getInstance().getBroker());
+            throw new RuntimeException("World not found %s tracking code %s".formatted(mine.getWorldName(), trackingCode));
+        }
+        Bukkit.unloadWorld(world, true);
+        Message.builder()
+                .type(Message.Type.MINE_UNLOAD_RESPONSE)
+                .payload(Payload.withResponse(new Response(ResponseType.SUCCESS, mine.getWorldName(), "")))
+                .build().send(PrisonCore.getInstance().getBroker());
     }
 
     public Mine getBreakableMine(UUID player) {

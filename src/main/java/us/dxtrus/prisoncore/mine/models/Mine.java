@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import us.dxtrus.prisoncore.PrisonCore;
+import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.util.LogUtil;
 import us.dxtrus.prisoncore.util.RandomSelector;
 
@@ -41,24 +42,14 @@ public class Mine {
 
         this.mineCenter = center;
 
-        materials = Lists.newArrayList();
+        materials = Config.getInstance().getRanks().get(1);
 
         bounds.forEach(block -> total += 1);
     }
 
-    // DEBUG DATA
-    public void init() {
-        LogUtil.info("Initialising mine for uuid " + linkage.getOwner().toString() + " (World Name: " + linkage.getWorldName() + ")");
-
-        materials.add(new MineMaterial(75d, Material.NETHERITE_BLOCK));
-        materials.add(new MineMaterial(20d, Material.ANCIENT_DEBRIS));
-        materials.add(new MineMaterial(5d, Material.BLACK_CONCRETE));
-        this.random = RandomSelector.weighted(materials, MineMaterial::percentage);
-
-        reset();
-    }
-
     public void reset() {
+        this.materials = Config.getInstance().getRanks().get(1);
+        this.random = RandomSelector.weighted(materials, MineMaterial::getPercentage);
         Bukkit.getOnlinePlayers().stream()
                 .filter(player -> bounds.contains(player.getLocation()))
                 .forEach(player -> player.teleport(new Location(world,
@@ -68,7 +59,7 @@ public class Mine {
 
 
         bounds.forEach(block ->
-                block.setType(random.next(PrisonCore.getInstance().getRandom()).material(), false));
+                block.setType(random.next(PrisonCore.getInstance().getRandom()).getMaterial(), false));
         broken = 0;
     }
 
