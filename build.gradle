@@ -3,6 +3,7 @@ import org.gradle.authentication.http.BasicAuthentication
 
 plugins {
     id 'java'
+    id 'io.github.goooler.shadow' version '8.1.7'
 }
 
 group = 'us.dxtrus'
@@ -34,6 +35,8 @@ dependencies {
     compileOnly 'com.infernalsuite.aswm:api:3.0.0'
     compileOnly 'com.infernalsuite.aswm:loaders:3.0.0-SNAPSHOT'
 
+    compileOnly "net.dxtrus.scoreboard:DexterousScoreboard:1.1-SNAPSHOT"
+
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     compileOnly 'me.clip:placeholderapi:2.11.6'
 
@@ -57,6 +60,11 @@ tasks.withType(JavaCompile).configureEach {
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
         options.release.set(targetJavaVersion)
     }
+}
+
+shadowJar {
+    destinationDirectory.set(file("$rootDir/build/libs"))
+    archiveClassifier.set('')
 }
 
 processResources {
