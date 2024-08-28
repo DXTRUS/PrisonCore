@@ -37,6 +37,6 @@ public class CommandMine extends BukkitCommand {
             return;
         }
 
-        MineGui.getInstance().open(((Player) commandUser.getAudience()));
+        new MineGui().open(((Player) commandUser.getAudience()));
     }
 }

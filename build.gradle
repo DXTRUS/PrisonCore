@@ -11,15 +11,13 @@ version = '1.0'
 
 repositories {
     mavenCentral()
+    maven { url "https://repo.papermc.io/repository/maven-public/" }
+    maven { url "https://oss.sonatype.org/content/groups/public/" }
+    maven { url 'https://jitpack.io' }
     maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     maven { url 'https://repo.infernalsuite.com/repository/maven-releases/' }
     maven { url 'https://repo.infernalsuite.com/repository/maven-snapshots/' }
     maven { url 'https://repo.rapture.pw/repository/maven-releases/' }
-    maven { url 'https://jitpack.io' }
-    maven { url "https://repo.papermc.io/repository/maven-public/" }
-    maven { url "https://oss.sonatype.org/content/groups/public/" }
-
-    // https://repo.infernalsuite.com/repository/maven-snapshots/
 
     maven {
         name = "dxtrusReleases"
@@ -32,24 +30,18 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.infernalsuite.aswm:api:3.0.0-SNAPSHOT"
-    implementation 'com.infernalsuite.aswm:loaders:3.0.0-SNAPSHOT'
-    compileOnly "io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT"
-
-    implementation 'com.zaxxer:HikariCP:5.1.0'
-
-    compileOnly "org.projectlombok:lombok:1.18.30"
+    compileOnly "io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT"
     compileOnly "us.dxtrus.commons:bukkit:2.1.5"
-    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    compileOnly 'me.clip:placeholderapi:2.11.6'
+    compileOnly 'com.infernalsuite.aswm:api:3.0.0'
+    compileOnly 'com.infernalsuite.aswm:loaders:3.0.0-SNAPSHOT'
+
     compileOnly "net.dxtrus.scoreboard:DexterousScoreboard:1.1-SNAPSHOT"
 
-    annotationProcessor "org.projectlombok:lombok:1.18.30"
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+    compileOnly 'me.clip:placeholderapi:2.11.6'
 
-    implementation 'com.mysql:mysql-connector-j:8.3.0'
-    implementation('org.mariadb.jdbc:mariadb-java-client:3.3.3') {
-        exclude group: '*', module: '*'
-    }
+    compileOnly "org.projectlombok:lombok:1.18.30"
+    annotationProcessor "org.projectlombok:lombok:1.18.30"
 }
 
 def targetJavaVersion = 21

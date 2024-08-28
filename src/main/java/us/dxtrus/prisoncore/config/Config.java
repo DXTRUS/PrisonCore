@@ -4,14 +4,17 @@ package us.dxtrus.prisoncore.config;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import us.dxtrus.commons.config.Configuration;
-import us.dxtrus.commons.config.NameFormatters;
-import us.dxtrus.commons.config.YamlConfigurationProperties;
-import us.dxtrus.commons.config.YamlConfigurations;
+import org.bukkit.Material;
+import us.dxtrus.commons.config.*;
 import us.dxtrus.prisoncore.PrisonCore;
+import us.dxtrus.prisoncore.mine.models.MineMaterial;
+import us.dxtrus.prisoncore.mine.network.loadbalancer.Distributor;
+import us.dxtrus.prisoncore.storage.DatabaseType;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 @Getter
 @Configuration
@@ -31,6 +34,15 @@ public class Config {
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
             .header(CONFIG_HEADER).build();
 
+    private Map<Integer, List<MineMaterial>> ranks = Map.of(0, List.of(
+            new MineMaterial(Material.NETHERITE_BLOCK, 80),
+            new MineMaterial(Material.ANCIENT_DEBRIS, 10),
+            new MineMaterial(Material.BLACK_CONCRETE, 10)
+    ),1, List.of(
+            new MineMaterial(Material.GREEN_CONCRETE, 80),
+            new MineMaterial(Material.SLIME_BLOCK, 10),
+            new MineMaterial(Material.LIME_TERRACOTTA, 10)
+    ));
 
     private Commands commands = new Commands();
 
@@ -43,17 +55,52 @@ public class Config {
         private boolean reset = true;
     }
 
-    private Sql sql = new Sql();
+    private Storage storage = new Storage();
 
     @Getter
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Sql {
-        private String host = "127.0.0.1";
+    public static class Storage {
+        @Comment("Allowed: MYSQL, MARIADB")
+        private DatabaseType type = DatabaseType.MARIADB;
+
+        private String host = "localhost";
         private int port = 3306;
-        private String password = "root";
+        private String database = "PrisonCore";
         private String username = "root";
-        private String database = "prisoncore";
+        private String password = "";
+        private boolean useSsl = false;
+    }
+
+    private Servers servers = new Servers();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Servers {
+        private boolean singleInstance = true;
+
+        @Comment("Allowed: LOWEST_PLAYER, LOWEST_USAGE, ROUND_ROBIN, RANDOM")
+        private Distributor distributionRule = Distributor.LOWEST_PLAYER;
+
+        private List<String> mineServers = List.of(
+                "op-prisons-mines-01",
+                "op-prisons-mines-02"
+        );
+        private List<String> spawnServers = List.of(
+                "op-prisons-spawn-01"
+        );
+    }
+
+    private Redis redis = new Redis();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Redis {
+        private String host = "localhost";
+        private int port = 3306;
+        private String password = "";
     }
 
     public static void reload() {

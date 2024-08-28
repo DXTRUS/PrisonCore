@@ -1,14 +1,15 @@
-package us.dxtrus.prisoncore.storage;
-
+package us.dxtrus.prisoncore.storage.handlers;
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import us.dxtrus.commons.database.DatabaseHandler;
 import us.dxtrus.commons.database.DatabaseObject;
 import us.dxtrus.commons.database.dao.Dao;
-import com.zaxxer.hikari.HikariDataSource;
+import us.dxtrus.commons.shaded.hikari.HikariDataSource;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.stats.Statistics;
+import us.dxtrus.prisoncore.storage.doas.DaoStatictics;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -17,17 +18,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
-public class MySQLHandler {
+public class MySQLHandler implements DatabaseHandler {
     private final Map<Class<?>, Dao<?>> daos = new HashMap<>();
 
     private static MySQLHandler instance;
-    @Getter private boolean connected = false;
+    @Getter
+    private boolean connected = false;
 
     private final String driverClass;
-    @Getter private HikariDataSource dataSource;
+    private HikariDataSource dataSource;
 
     public MySQLHandler() {
-        this.driverClass = "org.mariadb.jdbc.Driver";
+        this.driverClass = Config.getInstance().getStorage().getType().getDriverClass();
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -42,11 +44,11 @@ public class MySQLHandler {
     }
 
     public void connect() {
-        Config.Sql sql = Config.getInstance().getSql();
+        Config.Storage sql = Config.getInstance().getStorage();
 
         dataSource = new HikariDataSource();
         dataSource.setDriverClassName(driverClass);
-        dataSource.setJdbcUrl(String.format("jdbc:mariadb://%s:%d/%s", sql.getHost(), sql.getPort(), sql.getDatabase()));
+        dataSource.setJdbcUrl(String.format("jdbc:%s://%s:%d/%s", Config.getInstance().getStorage().getType().getId(), sql.getHost(), sql.getPort(), sql.getDatabase()));
         dataSource.setUsername(sql.getUsername());
         dataSource.setPassword(sql.getPassword());
 
@@ -77,7 +79,7 @@ public class MySQLHandler {
         dataSource.setDataSourceProperties(properties);
 
         try (Connection connection = dataSource.getConnection()) {
-            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", "mariadb"));
+            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.getInstance().getStorage().getType().getId()));
             try (Statement statement = connection.createStatement()) {
                 for (String tableCreationStatement : databaseSchema) {
                     statement.execute(tableCreationStatement);
@@ -101,37 +103,53 @@ public class MySQLHandler {
         if (dataSource != null) dataSource.close();
     }
 
+    @Override
+    public void wipeDatabase() {
+        // do nun
+    }
+
     public void registerDaos() {
         daos.put(Statistics.class, new DaoStatictics(dataSource));
     }
 
-
-    public <T> List<T> getAll(Class<T> clazz) {
+    @Override
+    public <T extends DatabaseObject> List<T> getAll(Class<T> clazz) {
         return (List<T>) getDao(clazz).getAll();
     }
 
-
-    public <T> Optional<T> get(Class<T> clazz, UUID id) {
+    @Override
+    public <T extends DatabaseObject> Optional<T> get(Class<T> clazz, UUID id) {
         return (Optional<T>) getDao(clazz).get(id);
     }
 
-
-    public <T> void save(Class<T> clazz, T t) {
-        getDao(clazz).save((DatabaseObject) t);
+    @Override
+    public <T extends DatabaseObject> Optional<T> search(Class<T> clazz, String search) {
+        return (Optional<T>) getDao(clazz).get(search);
     }
 
-
-    public <T> void update(Class<T> clazz, T t, String[] params) {
-        getDao(clazz).update((DatabaseObject) t, params);
+    @Override
+    public <T extends DatabaseObject> void save(Class<T> clazz, T t) {
+        getDao(clazz).save(t);
     }
 
-
-    public <T> void delete(Class<T> clazz, T t) {
-        getDao(clazz).delete((DatabaseObject) t);
+    @Override
+    public <T extends DatabaseObject> void update(Class<T> clazz, T t, String[] params) {
+        getDao(clazz).update(t, params);
     }
 
-    public <T> void deleteSpecific(Class<T> clazz, T t, Object o) {
-        getDao(clazz).deleteSpecific((DatabaseObject) t, o);
+    @Override
+    public <T extends DatabaseObject> void delete(Class<T> clazz, T t) {
+        getDao(clazz).delete(t);
+    }
+
+    @Override
+    public <T extends DatabaseObject> void deleteSpecific(Class<T> clazz, T t, Object o) {
+        getDao(clazz).deleteSpecific(t, o);
+    }
+
+    @Override
+    public void registerDao(Class<?> aClass, Dao<? extends DatabaseObject> dao) {
+
     }
 
     /**

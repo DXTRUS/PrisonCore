@@ -1,105 +1,118 @@
 package us.dxtrus.prisoncore.storage;
 
-import lombok.Getter;
-import us.dxtrus.commons.shaded.HikariConfig;
-import us.dxtrus.commons.shaded.HikariDataSource;
-import us.dxtrus.prisoncore.PrisonCore;
-import us.dxtrus.prisoncore.config.Config;
-import us.dxtrus.prisoncore.stats.Statistics;
+import us.dxtrus.commons.database.DatabaseHandler;
+import us.dxtrus.commons.database.DatabaseObject;
+import us.dxtrus.prisoncore.storage.handlers.MySQLHandler;
+import us.dxtrus.prisoncore.util.LogUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.UUID;
-import java.util.logging.Level;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
-/**
- * Prevail is probably going to change this to DAOs
- */
 public class StorageManager {
     private static StorageManager instance;
 
-    private boolean error = false;
+    private final Map<DatabaseType, Class<? extends DatabaseHandler>> databaseHandlers = new HashMap<>();
+    private final DatabaseHandler handler;
 
-    @Getter private HikariDataSource dataSource;
-    @Getter private HikariConfig config;
+    private StorageManager() {
+        LogUtil.info("Connecting to Database and populating caches...");
+        databaseHandlers.put(DatabaseType.MYSQL, MySQLHandler.class);
+        databaseHandlers.put(DatabaseType.MARIADB, MySQLHandler.class);
 
-    public void connect() {
-        Config.Sql sql = Config.getInstance().getSql();
-        config = new HikariConfig();
+        this.handler = initHandler();
+        LogUtil.debug("Connected to Database and populated caches!");
+    }
 
-        config.setMaximumPoolSize(250);
-        config.setMinimumIdle(10);
-        config.setJdbcUrl(String.format("jdbc:mariadb://%s:%d/%s", sql.getHost(), sql.getPort(), sql.getDatabase()));
-        config.setUsername(sql.getUsername());
-        config.setPassword(sql.getPassword());
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+    public <T extends DatabaseObject> CompletableFuture<List<T>> getAll(Class<T> clazz) {
+        if (!isConnected()) {
+            LogUtil.severe("Tried to perform database action when the database is not connected!");
+            return CompletableFuture.completedFuture(List.of());
+        }
+        return CompletableFuture.supplyAsync(() -> handler.getAll(clazz));
+    }
 
+    public <T extends DatabaseObject> CompletableFuture<Optional<T>> get(Class<T> clazz, UUID id) {
+        if (!isConnected()) {
+            LogUtil.severe("Tried to perform database action when the database is not connected!");
+            return CompletableFuture.completedFuture(Optional.empty());
+        }
+        return CompletableFuture.supplyAsync(() -> handler.get(clazz, id));
+    }
+
+    /**
+     * Search the database for something matching name.
+     * @param clazz the class to search for.
+     * @param name the name, either a username or a servername.
+     * @return a completable future of the optional object or an empty optional
+     */
+    public <T extends DatabaseObject> CompletableFuture<Optional<T>> search(Class<T> clazz, String name) {
+        if (!isConnected()) {
+            LogUtil.severe("Tried to perform database action when the database is not connected!");
+            return CompletableFuture.completedFuture(Optional.empty());
+        }
+        return CompletableFuture.supplyAsync(() -> handler.search(clazz, name));
+    }
+
+    public <T extends DatabaseObject> CompletableFuture<Void> save(Class<T> clazz, T t) {
+        if (!isConnected()) {
+            LogUtil.severe("Tried to perform database action when the database is not connected!");
+            return CompletableFuture.completedFuture(null);
+        }
+        return CompletableFuture.supplyAsync(() -> {
+            handler.save(clazz, t);
+            return null;
+        });
+    }
+
+    public <T extends DatabaseObject> CompletableFuture<Void> delete(Class<T> clazz, T t) {
+        if (!isConnected()) {
+            LogUtil.severe("Tried to perform database action when the database is not connected!");
+            return CompletableFuture.completedFuture(null);
+        }
+        return CompletableFuture.supplyAsync(() -> {
+            handler.delete(clazz, t);
+            return null;
+        });
+    }
+
+    public <T extends DatabaseObject> CompletableFuture<Void> update(Class<T> clazz, T t, String[] params) {
+        if (!isConnected()) {
+            LogUtil.severe("Tried to perform database action when the database is not connected!");
+            return CompletableFuture.completedFuture(null);
+        }
+        return CompletableFuture.supplyAsync(() -> {
+            handler.update(clazz, t, params);
+            return null;
+        });
+    }
+
+    public boolean isConnected() {
+        return handler.isConnected();
+    }
+
+    public void shutdown() {
+        handler.destroy();
+    }
+
+    private DatabaseHandler initHandler() {
+        DatabaseType type = DatabaseType.MARIADB;
+        LogUtil.debug("DB Type: %s".formatted(type.getFriendlyName()));
         try {
-            dataSource = new HikariDataSource(config);
-        } catch (Exception ex) {
-            PrisonCore.getInstance().getLogger().log(Level.SEVERE, "Database connection failed", ex);
-            error = true;
-        }
-    }
-
-    public boolean hasStatistics(UUID uuid) {
-        if (error) {
-            throw new UnsupportedOperationException("Database not connected.");
-        }
-
-        String sql = "SELECT * FROM statistics WHERE uuid = ?;";
-        try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, uuid.toString());
-            ResultSet results = statement.executeQuery();
-
-            return results.next();
-        } catch (SQLException ex) {
-            PrisonCore.getInstance().getLogger().log(Level.SEVERE, "Failed to query statistics for " + uuid, ex);
-            return false;
-        }
-    }
-
-    public void saveStatistics(Statistics statistics) {
-        if (error) {
-            throw new UnsupportedOperationException("Database not connected.");
-        }
-
-        if (!hasStatistics(statistics.getUuid())) {
-            createStatistics(statistics);
-            return;
-        }
-
-        String sql = "";
-        try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement("")) {
-
-        } catch (SQLException ex) {
-            PrisonCore.getInstance().getLogger().log(Level.SEVERE, "Failed to save statistics for " + statistics.getUuid(), ex);
-        }
-    }
-
-    public void createStatistics(Statistics statistics) {
-        if (error) {
-            throw new UnsupportedOperationException("Database not connected.");
-        }
-
-        String sql = "INSERT INTO statistics (uuid, tokens, gems, blocks_broken) VALUES (?, ?, ?, ?);";
-        try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, statistics.getUuid().toString());
-            statement.setString(2, statistics.getTokens().toString());
-            statement.setString(3, statistics.getGems().toString());
-            statement.setString(4, statistics.getBlocksBroken().toString());
-
-            statement.executeUpdate();
-        } catch (SQLException ex) {
-            PrisonCore.getInstance().getLogger().log(Level.SEVERE, "Failed to create statistics for " + statistics.getUuid(), ex);
+            Class<? extends DatabaseHandler> handlerClass = databaseHandlers.get(type);
+            if (handlerClass == null) {
+                throw new IllegalStateException("No handler for database type %s registered!".formatted(type.getFriendlyName()));
+            }
+            return handlerClass.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     public static StorageManager getInstance() {
-        return instance == null ? instance = new StorageManager() : instance;
+        if (instance == null) {
+            instance = new StorageManager();
+            instance.handler.connect();
+        }
+        return instance;
     }
 }
