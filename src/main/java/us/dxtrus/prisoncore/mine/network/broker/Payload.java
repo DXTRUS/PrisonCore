@@ -1,4 +1,4 @@
-package us.dxtrus.prisoncore.mines.network.broker;
+package us.dxtrus.prisoncore.mine.network.broker;
 
 import com.google.gson.annotations.Expose;
 import org.jetbrains.annotations.NotNull;

@@ -1,4 +1,4 @@
-package us.dxtrus.prisoncore.mines.loader;
+package us.dxtrus.prisoncore.mine.loader;
 
 import com.infernalsuite.aswm.api.loaders.SlimeLoader;
 import lombok.Getter;

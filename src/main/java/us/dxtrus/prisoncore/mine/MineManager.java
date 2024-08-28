@@ -1,8 +1,8 @@
-package us.dxtrus.prisoncore.mines;
+package us.dxtrus.prisoncore.mine;
 
-import us.dxtrus.prisoncore.mines.models.Mine;
-import us.dxtrus.prisoncore.mines.models.Server;
-import us.dxtrus.prisoncore.mines.network.ServerManager;
+import us.dxtrus.prisoncore.mine.models.Mine;
+import us.dxtrus.prisoncore.mine.models.Server;
+import us.dxtrus.prisoncore.mine.network.ServerManager;
 
 /**
  * Manages servers across the entire network and manages them.

@@ -1,4 +1,4 @@
-package us.dxtrus.prisoncore.mines;
+package us.dxtrus.prisoncore.mine;
 
 import com.infernalsuite.aswm.api.AdvancedSlimePaperAPI;
 import com.infernalsuite.aswm.api.exceptions.CorruptedWorldException;
@@ -8,10 +8,8 @@ import com.infernalsuite.aswm.api.loaders.SlimeLoader;
 import com.infernalsuite.aswm.api.world.SlimeWorld;
 import com.infernalsuite.aswm.api.world.properties.SlimeProperties;
 import com.infernalsuite.aswm.api.world.properties.SlimePropertyMap;
-import org.bukkit.World;
-import us.dxtrus.prisoncore.exceptions.MineLoadException;
-import us.dxtrus.prisoncore.mines.loader.LoaderManager;
-import us.dxtrus.prisoncore.mines.models.Mine;
+import us.dxtrus.prisoncore.mine.loader.LoaderManager;
+import us.dxtrus.prisoncore.mine.models.Mine;
 
 import java.io.IOException;
 

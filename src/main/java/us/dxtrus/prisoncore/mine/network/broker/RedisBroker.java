@@ -1,4 +1,4 @@
-package us.dxtrus.prisoncore.mines.network.broker;
+package us.dxtrus.prisoncore.mine.network.broker;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Config;

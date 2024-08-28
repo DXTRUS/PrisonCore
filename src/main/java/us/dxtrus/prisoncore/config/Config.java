@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import us.dxtrus.commons.config.*;
 import us.dxtrus.prisoncore.PrisonCore;
-import us.dxtrus.prisoncore.mines.network.loadbalancer.Distributor;
+import us.dxtrus.prisoncore.mine.network.loadbalancer.Distributor;
 import us.dxtrus.prisoncore.storage.DatabaseType;
 
 import java.io.File;

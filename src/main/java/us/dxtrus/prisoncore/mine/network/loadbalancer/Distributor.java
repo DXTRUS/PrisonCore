@@ -1,8 +1,8 @@
-package us.dxtrus.prisoncore.mines.network.loadbalancer;
+package us.dxtrus.prisoncore.mine.network.loadbalancer;
 
 import us.dxtrus.prisoncore.PrisonCore;
-import us.dxtrus.prisoncore.mines.models.Server;
-import us.dxtrus.prisoncore.mines.network.ServerManager;
+import us.dxtrus.prisoncore.mine.models.Server;
+import us.dxtrus.prisoncore.mine.network.ServerManager;
 
 import java.util.Comparator;
 import java.util.List;

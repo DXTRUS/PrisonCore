@@ -1,7 +1,7 @@
-package us.dxtrus.prisoncore.mines.network;
+package us.dxtrus.prisoncore.mine.network;
 
 import us.dxtrus.prisoncore.config.Config;
-import us.dxtrus.prisoncore.mines.models.Server;
+import us.dxtrus.prisoncore.mine.models.Server;
 
 import java.util.ArrayList;
 import java.util.List;

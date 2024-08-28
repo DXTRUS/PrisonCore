@@ -1,4 +1,4 @@
-package us.dxtrus.prisoncore.mines.models;
+package us.dxtrus.prisoncore.mine.models;
 
 import lombok.Getter;
 import lombok.Setter;

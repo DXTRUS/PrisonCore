@@ -1,4 +1,4 @@
-package us.dxtrus.prisoncore.mines.network.loadbalancer;
+package us.dxtrus.prisoncore.mine.network.loadbalancer;
 
 public class DistributorConstants {
     public static int currentServerIndex = 0;

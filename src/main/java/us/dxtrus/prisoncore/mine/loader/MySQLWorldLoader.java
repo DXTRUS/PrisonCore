@@ -1,4 +1,4 @@
-package us.dxtrus.prisoncore.mines.loader;
+package us.dxtrus.prisoncore.mine.loader;
 
 import com.infernalsuite.aswm.api.exceptions.UnknownWorldException;
 import org.slf4j.Logger;
