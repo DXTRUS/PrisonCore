@@ -38,7 +38,9 @@ public final class RedisBroker extends Broker {
         }
 
         subscriber.enable(jedisPool);
-        new Thread(subscriber::subscribe, "fadah:redis_subscriber").start();
+        Thread thread = new Thread(subscriber::subscribe, "prisoncore:redis_subscriber");
+        thread.setDaemon(true);
+        thread.start();
     }
 
 

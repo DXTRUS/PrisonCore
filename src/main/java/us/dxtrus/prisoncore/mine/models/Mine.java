@@ -1,22 +1,89 @@
 package us.dxtrus.prisoncore.mine.models;
 
-import us.dxtrus.commons.database.DatabaseObject;
+import com.google.common.collect.Lists;
+import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
+import us.dxtrus.prisoncore.PrisonCore;
+import us.dxtrus.prisoncore.util.LogUtil;
+import us.dxtrus.prisoncore.util.RandomSelector;
 
-import java.util.UUID;
+import java.util.List;
 
-public interface Mine extends DatabaseObject {
-    boolean isLoaded();
-    String getServer();
-    UUID getOwner();
-    String getWorldName();
-    LocRef getSpawnLocation();
-    LocRef getNpcLocation();
+@Getter
+public class Mine {
+    private final PrivateMine linkage;
+    private Cuboid bounds;
+    private final World world;
+    private final LocRef mineCenter;
+    @Setter private List<MineMaterial> materials;
+    private RandomSelector<MineMaterial> random;
 
-    LocRef getCenter();
-    int getSize();
+    private int broken = 0;
+    private int total = 0;
 
-    void setLoaded(boolean loaded);
-    void setServer(Server server);
-    void setNpcLocation(LocRef npc);
-    void setSize(int size);
+    private final double resetAtPercentageBroken = 0.80d;
+
+    public Mine(@NotNull PrivateMine linkage, @NotNull LocRef center, int size) {
+        this.linkage = linkage;
+        this.world = Bukkit.getWorld(linkage.getWorldName());
+        this.bounds = new Cuboid(center.toBukkit(world));
+
+        this.bounds = bounds.expand(Cuboid.CuboidDirection.North, size);
+        this.bounds = bounds.expand(Cuboid.CuboidDirection.South, size);
+        this.bounds = bounds.expand(Cuboid.CuboidDirection.East, size);
+        this.bounds = bounds.expand(Cuboid.CuboidDirection.West, size);
+        this.bounds = bounds.expand(Cuboid.CuboidDirection.Down, 100);
+
+        this.mineCenter = center;
+
+        materials = Lists.newArrayList();
+
+        bounds.forEach(block -> total += 1);
+    }
+
+    // DEBUG DATA
+    public void init() {
+        LogUtil.info("Initialising mine for uuid " + linkage.getOwner().toString() + " (World Name: " + linkage.getWorldName() + ")");
+
+        materials.add(new MineMaterial(75d, Material.NETHERITE_BLOCK));
+        materials.add(new MineMaterial(20d, Material.ANCIENT_DEBRIS));
+        materials.add(new MineMaterial(5d, Material.BLACK_CONCRETE));
+        this.random = RandomSelector.weighted(materials, MineMaterial::percentage);
+
+        reset();
+    }
+
+    public void reset() {
+        Bukkit.getOnlinePlayers().stream()
+                .filter(player -> bounds.contains(player.getLocation()))
+                .forEach(player -> player.teleport(new Location(world,
+                        linkage.getSpawnLocation().getX() + 0.5d,
+                        linkage.getSpawnLocation().getY(),
+                        linkage.getSpawnLocation().getZ() + 0.5d)));
+
+
+        bounds.forEach(block ->
+                block.setType(random.next(PrisonCore.getInstance().getRandom()).material(), false));
+        broken = 0;
+    }
+
+    public void incrementBroken() {
+        incrementBroken(1);
+    }
+
+    public void incrementBroken(int count) {
+        broken += count;
+        if ((double)broken / (double) total >= resetAtPercentageBroken) {
+            reset();
+        }
+    }
+
+    public double percentageBroken() {
+        return (double) broken / (double) total;
+    }
 }

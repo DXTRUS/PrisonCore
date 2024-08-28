@@ -18,13 +18,23 @@ import us.dxtrus.commons.loader.LogManager;
 import us.dxtrus.commons.utils.BungeeMessenger;
 import us.dxtrus.prisoncore.commands.AdminCommand;
 import us.dxtrus.prisoncore.commands.CommandMine;
+import us.dxtrus.prisoncore.config.Config;
+import us.dxtrus.prisoncore.config.Lang;
 import us.dxtrus.prisoncore.eco.EconomyManager;
 import us.dxtrus.prisoncore.eco.papi.PlaceholderTokens;
+import us.dxtrus.prisoncore.listeners.PlayerListener;
+import us.dxtrus.prisoncore.mine.LocalMineManager;
+import us.dxtrus.prisoncore.mine.MineManager;
+import us.dxtrus.prisoncore.mine.network.HeartBeat;
+import us.dxtrus.prisoncore.mine.network.ServerManager;
+import us.dxtrus.prisoncore.mine.network.TransferManager;
 import us.dxtrus.prisoncore.mine.network.broker.Broker;
 import us.dxtrus.prisoncore.mine.network.broker.RedisBroker;
+import us.dxtrus.prisoncore.storage.StorageManager;
 import us.dxtrus.prisoncore.util.StringUtil;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -40,6 +50,17 @@ public final class PrisonCore extends JavaPlugin implements Listener {
         instance = this;
 
         broker = new RedisBroker(this);
+        broker.connect();
+
+        // Init all managers
+        StorageManager.getInstance();
+        Config.getInstance();
+        Lang.getInstance();
+        ServerManager.getInstance();
+        LocalMineManager.getInstance();
+        MineManager.getInstance();
+        TransferManager.getInstance();
+        HeartBeat.getInstance();
 
         FastInvManager.register(this);
 
@@ -48,8 +69,18 @@ public final class PrisonCore extends JavaPlugin implements Listener {
                 new AdminCommand(this)
         ).forEach(BukkitCommandManager.getInstance()::registerCommand);
 
+        Stream.of(
+                new PlayerListener(this)
+        ).forEach(e -> Bukkit.getPluginManager().registerEvents(e, this));
+
         new PlaceholderTokens().register();
         Bukkit.getPluginManager().registerEvents(this, this);
+    }
+
+    @Override
+    public void onDisable() {
+        broker.destroy();
+        StorageManager.getInstance().shutdown();
     }
 
 //    ECONOMY

@@ -35,6 +35,7 @@ public class Lang {
     private String prefix = "&#9555ff&lMINE &8&l»&r";
 
     private Command command = new Command();
+
     @Getter
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -50,6 +51,7 @@ public class Lang {
         public static class Mine {
             private String guiTitle = "Mine Options";
             private String teleport = "{prefix} Teleporting to mine...";
+            private String teleportComplete = "{prefix} Teleported to mine!";
             private String reset = "{prefix} Resetting mine...";
 
 
@@ -71,6 +73,18 @@ public class Lang {
             private String success = "{prefix} &fReload &asuccess";
             private String fail = "{prefix} %fReload &cfailed&f. Check console.";
         }
+    }
+
+    private Errors errors = new Errors();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Errors {
+        private String worldNotFound = "{prefix} &cYour mine was not found! &7Creating a mine for you!";
+        private String worldCorrupted = "{prefix} &cYour mine is corrupted! &7Attempting to automatically fix this...";
+        private String worldOldFormat = "{prefix} &cYour mine is outdated... &7Regenerating...";
+        private String genericWorldError = "{prefix} &cAn unknown error has occurred with your mine! &7(Tracking Code: %s)";
     }
 
     public static void reload() {

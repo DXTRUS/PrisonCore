@@ -56,7 +56,7 @@ public class Config {
         private String database = "PrisonCore";
         private String username = "root";
         private String password = "";
-        private boolean useSSL = false;
+        private boolean useSsl = false;
     }
 
     private Servers servers = new Servers();

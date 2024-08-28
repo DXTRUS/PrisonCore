@@ -9,8 +9,7 @@ import java.util.List;
 
 public class ServerManager {
     private static ServerManager instance;
-    @Getter
-    private final Server thisServer;
+    @Getter private final Server thisServer;
 
     private final List<Server> servers = new ArrayList<>();
 
@@ -24,6 +23,11 @@ public class ServerManager {
 
     public List<Server> getAllServers() {
         return servers;
+    }
+
+    public Server getServer(String name) {
+        servers.removeIf(s -> s.getName().equalsIgnoreCase(name));
+        return servers.getFirst();
     }
 
     public static ServerManager getInstance() {

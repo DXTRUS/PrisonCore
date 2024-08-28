@@ -26,7 +26,7 @@ public class Payload {
 
     @Nullable
     @Expose
-    public Response response;
+    private Response response;
 
     /**
      * Returns an empty cross-server message payload.

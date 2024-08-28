@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import us.dxtrus.commons.command.BukkitCommand;
 import us.dxtrus.commons.command.Command;
 import us.dxtrus.commons.command.user.CommandUser;
+import us.dxtrus.prisoncore.commands.subcommands.admin.DeleteAllCommand;
 import us.dxtrus.prisoncore.commands.subcommands.admin.ReloadCommand;
 import us.dxtrus.prisoncore.config.Lang;
 import us.dxtrus.prisoncore.util.MessageUtils;
@@ -15,7 +16,8 @@ public class AdminCommand extends BukkitCommand {
     public AdminCommand(JavaPlugin plugin) {
         super(plugin);
         Stream.of(
-                new ReloadCommand()
+                new ReloadCommand(),
+                new DeleteAllCommand()
         ).forEach(getSubCommands()::add);
     }
 
