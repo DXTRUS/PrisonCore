@@ -73,11 +73,12 @@ public class DaoStatistics implements Dao<Statistics> {
 
     @Override
     public void update(Statistics statistics, String[] strings) {
-        String sql = "UPDATE statistics SET tokens = ?, gems = ?, blocks_broken = ? WHERE uuid = " + statistics.getUuid().toString() + ";";
+        String sql = "UPDATE statistics SET tokens = ?, gems = ?, blocks_broken = ? WHERE uuid = ?;";
         try (Connection connection = dataSource.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, statistics.getTokens().toString());
             statement.setString(2, statistics.getGems().toString());
             statement.setString(3, statistics.getBlocksBroken().toString());
+            statement.setString(4, statistics.getUuid().toString());
 
             statement.executeUpdate();
         } catch (SQLException ex) {
