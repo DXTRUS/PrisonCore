@@ -34,15 +34,67 @@ public class Config {
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
             .header(CONFIG_HEADER).build();
 
-    private Map<Integer, List<MineMaterial>> ranks = Map.of(0, List.of(
-            new MineMaterial(Material.NETHERITE_BLOCK, 80),
-            new MineMaterial(Material.ANCIENT_DEBRIS, 10),
-            new MineMaterial(Material.BLACK_CONCRETE, 10)
-    ),1, List.of(
-            new MineMaterial(Material.GREEN_CONCRETE, 80),
-            new MineMaterial(Material.SLIME_BLOCK, 10),
-            new MineMaterial(Material.LIME_TERRACOTTA, 10)
-    ));
+
+    private Ranks ranks = new Ranks();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Ranks {
+        private Map<Integer, Integer> mineSizes = Map.of(0, 16, 1, 20);
+
+        private Map<Integer, List<MineMaterial>> blocks = Map.of(0, List.of(
+                new MineMaterial(Material.NETHERITE_BLOCK, 80),
+                new MineMaterial(Material.ANCIENT_DEBRIS, 10),
+                new MineMaterial(Material.BLACK_CONCRETE, 10)
+        ),1, List.of(
+                new MineMaterial(Material.GREEN_CONCRETE, 80),
+                new MineMaterial(Material.SLIME_BLOCK, 10),
+                new MineMaterial(Material.LIME_TERRACOTTA, 10)
+        ));
+    }
+
+    private Pickaxe pickaxe = new Pickaxe();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Pickaxe {
+        private String maxLevel = "&a✓";
+        private String notMaxLevel = "";
+        private String tokenEnchantFormat = "&e%name% &7%level% %max%";
+        private String gemEnchantFormat = "&a%name% &7%level% %max%";
+
+        private String xpBarFormat = "&8[&r%progress%&8]&r";
+        private String xpBarIcon = "=";
+
+        private List<String> format = List.of(
+                "",
+                "<yellow><bold>Token Enchants",
+                "&e&l|&r %t-enchant-1%",
+                "&e&l|&r %t-enchant-2%",
+                "&e&l|&r %t-enchant-3%",
+                "&e&l|&r %t-enchant-4%",
+                "&e&l|&r %t-enchant-5%",
+                "&e&l|&r %t-enchant-6%",
+                "&e&l|&r %t-enchant-7%",
+                "&e&l|&r %t-enchant-8%",
+                "&e&l|&r %t-enchant-9%",
+                "&e&l|&r %t-enchant-10%",
+                "",
+                "&a&lGem Enchants",
+                "&a&l|&r %g-enchant-1%",
+                "&a&l|&r %g-enchant-2%",
+                "&a&l|&r %g-enchant-3%",
+                "&a&l|&r %g-enchant-4%",
+                "&a&l|&r %g-enchant-5%",
+                "",
+                "&b&lPickaxe Statistics",
+                "&b&l|&r &fLevel: &7%level%",
+                "&b&l|&r &fXP: %xp-bar% &8(&a%xp-percent%%&8)",
+                "&b&l|&r &fSkin: %skin%"
+        );
+    }
 
     private Commands commands = new Commands();
 

@@ -1,8 +1,7 @@
 package us.dxtrus.prisoncore.mine.network;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
@@ -22,33 +21,6 @@ public class TransferManager {
 
     private TransferManager() {
         this.pool = startJedisPool();
-    }
-
-    public void addPlayerForTransfer(Player player, Server target) {
-        try (Jedis jedis = pool.getResource()) {
-            jedis.hset("prisoncore:transfers", player.getUniqueId().toString(), target.getName());
-        }
-    }
-
-    public void checkout(Player player) {
-        try (Jedis jedis = pool.getResource()) {
-            if (!jedis.hexists("prisoncore:transfers", player.getUniqueId().toString())) {
-                return;
-            }
-            String serverName = jedis.hget("prisoncore:transfers", player.getUniqueId().toString());
-            if (!serverName.equals(ServerManager.getInstance().getThisServer().getName())) {
-                ServerManager.getInstance().getServer(serverName).transferPlayer(player);
-                return;
-            }
-
-            jedis.hdel("prisoncore:transfers", player.getUniqueId().toString());
-            PrivateMine mine = new PrivateMine(player.getUniqueId());
-            player.teleportAsync(mine.getSpawnLocation().toBukkit(Bukkit.getWorld(mine.getWorldName()))).thenAccept(success -> {
-                player.setAllowFlight(true);
-                player.setFlying(true);
-                MessageUtils.send(player, Lang.getInstance().getCommand().getMine().getTeleportComplete());
-            });
-        }
     }
 
     // CALL ONCE!
@@ -74,5 +46,35 @@ public class TransferManager {
             instance = new TransferManager();
         }
         return instance;
+    }
+
+    public void addPlayerForTransfer(Player player, Server target) {
+        try (Jedis jedis = pool.getResource()) {
+            jedis.hset("prisoncore:transfers", player.getUniqueId().toString(), target.getName());
+        }
+    }
+
+    public void checkout(Player player) {
+        try (Jedis jedis = pool.getResource()) {
+            if (!jedis.hexists("prisoncore:transfers", player.getUniqueId().toString())) {
+                return;
+            }
+            String serverName = jedis.hget("prisoncore:transfers", player.getUniqueId().toString());
+            if (!serverName.equals(ServerManager.getInstance().getThisServer().getName())) {
+                ServerManager.getInstance().getServer(serverName).transferPlayer(player);
+                return;
+            }
+
+            jedis.hdel("prisoncore:transfers", player.getUniqueId().toString());
+            PrivateMine mine = new PrivateMine(player.getUniqueId());
+            Location location = mine.getSpawnLocation().toBukkit(Bukkit.getWorld(mine.getWorldName()));
+            location.setYaw(90);
+            location.setPitch(0);
+            player.teleportAsync(location).thenAccept(success -> {
+                player.setAllowFlight(true);
+                player.setFlying(true);
+                MessageUtils.send(player, Lang.getInstance().getCommand().getMine().getTeleportComplete());
+            });
+        }
     }
 }

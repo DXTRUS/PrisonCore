@@ -95,7 +95,9 @@ public class LocalMineManager {
 
             TaskManager.runSync(PrisonCore.getInstance(), () -> {
                 swmApi.loadWorld(world, true);
-                mine.getLinkage().reset();
+                Mine link = mine.getLinkage();
+                link.setWalls(mine.getLevel());
+                link.reset();
 
                 TaskManager.runAsync(PrisonCore.getInstance(), () ->
                         Message.builder()
