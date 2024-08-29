@@ -9,7 +9,7 @@ import us.dxtrus.prisoncore.PickaxeManager;
 public class PickaxeListeners implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (PickaxeManager.isPickaxe(e.getInventory().getItem(e.getSlot()))) {
+        if (PickaxeManager.isPickaxe(e.getCurrentItem())) {
             e.setCancelled(true);
         }
     }

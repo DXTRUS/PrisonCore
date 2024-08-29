@@ -12,6 +12,7 @@ import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.config.Lang;
 import us.dxtrus.prisoncore.hooks.PAPIHook;
 import us.dxtrus.prisoncore.listeners.MineListener;
+import us.dxtrus.prisoncore.listeners.PickaxeListeners;
 import us.dxtrus.prisoncore.listeners.PlayerListener;
 import us.dxtrus.prisoncore.mine.LocalMineManager;
 import us.dxtrus.prisoncore.mine.MineManager;
@@ -48,6 +49,7 @@ public final class PrisonCore extends JavaPlugin {
         MineManager.getInstance();
         TransferManager.getInstance();
         HeartBeat.getInstance();
+        PickaxeManager.startLoreUpdater();
 
         FastInvManager.register(this);
 
@@ -58,7 +60,8 @@ public final class PrisonCore extends JavaPlugin {
 
         Stream.of(
                 new PlayerListener(this),
-                new MineListener()
+                new MineListener(),
+                new PickaxeListeners()
         ).forEach(e -> Bukkit.getPluginManager().registerEvents(e, this));
 
         new PAPIHook().register();
