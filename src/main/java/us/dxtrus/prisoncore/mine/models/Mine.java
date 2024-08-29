@@ -61,8 +61,8 @@ public class Mine {
         broken = 0;
     }
 
-    public void setWalls(int level) {
-        Cuboid c = getBounds().outset(Cuboid.CuboidDirection.Both, level + 1);
+    public void setWalls() {
+        Cuboid c = getBounds().outset(Cuboid.CuboidDirection.Both, linkage.getLevel() + 1);
 
         Cuboid a = c.getFace(Cuboid.CuboidDirection.Down).expand(Cuboid.CuboidDirection.Down, 2);
         a.forEach(block -> block.setType(Material.PURPLE_STAINED_GLASS));
