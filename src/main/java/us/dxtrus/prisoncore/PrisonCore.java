@@ -10,6 +10,8 @@ import us.dxtrus.prisoncore.commands.AdminCommand;
 import us.dxtrus.prisoncore.commands.CommandMine;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.config.Lang;
+import us.dxtrus.prisoncore.pickaxe.PickaxeManager;
+import us.dxtrus.prisoncore.pickaxe.listeners.ToolListeners;
 import us.dxtrus.prisoncore.hooks.PAPIHook;
 import us.dxtrus.prisoncore.listeners.MineListener;
 import us.dxtrus.prisoncore.listeners.PickaxeListeners;
@@ -61,7 +63,8 @@ public final class PrisonCore extends JavaPlugin {
         Stream.of(
                 new PlayerListener(this),
                 new MineListener(),
-                new PickaxeListeners()
+                new PickaxeListeners(),
+                new ToolListeners()
         ).forEach(e -> Bukkit.getPluginManager().registerEvents(e, this));
 
         new PAPIHook().register();

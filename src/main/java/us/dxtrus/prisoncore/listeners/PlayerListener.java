@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.dxtrus.commons.utils.TaskManager;
+import us.dxtrus.prisoncore.pickaxe.PickaxeManager;
 import us.dxtrus.prisoncore.mine.MineManager;
 import us.dxtrus.prisoncore.mine.network.TransferManager;
 
@@ -19,6 +20,9 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         TaskManager.runAsync(plugin, () -> TransferManager.getInstance().checkout(player));
+        if (!player.hasPlayedBefore()) {
+            PickaxeManager.givePickaxe(player);
+        }
     }
 
     @EventHandler

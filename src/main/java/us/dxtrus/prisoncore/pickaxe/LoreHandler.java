@@ -1,4 +1,4 @@
-package us.dxtrus.prisoncore.util;
+package us.dxtrus.prisoncore.pickaxe;
 
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
@@ -8,6 +8,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.dxtrus.commons.utils.StringUtils;
 import us.dxtrus.prisoncore.config.Config;
+import us.dxtrus.prisoncore.pickaxe.enchants.EnchantManager;
+import us.dxtrus.prisoncore.pickaxe.enchants.models.EnchantReference;
+import us.dxtrus.prisoncore.pickaxe.enchants.models.EnchantType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +21,8 @@ public class LoreHandler {
         ItemMeta itemMeta = itemStack.getItemMeta();
         List<String> lore = Config.getInstance().getPickaxe().getFormat();
         String loreString = Strings.join(lore, '\n');
-        loreString = formatTokenEnchants(loreString);
-        loreString = formatGemEnchants(loreString);
+        loreString = formatTokenEnchants(itemStack, loreString);
+        loreString = formatGemEnchants(itemStack, loreString);
         loreString = formatStats(loreString, "");
 
         List<Component> newLore = new ArrayList<>();
@@ -31,21 +34,16 @@ public class LoreHandler {
         return itemStack;
     }
 
-    private String formatTokenEnchants(String string) {
-        string = string.replace("%t-enchant-1%", formatTokenEnchant(""));
-        string = string.replace("%t-enchant-2%", formatTokenEnchant(""));
-        string = string.replace("%t-enchant-3%", formatTokenEnchant(""));
-        string = string.replace("%t-enchant-4%", formatTokenEnchant(""));
-        string = string.replace("%t-enchant-5%", formatTokenEnchant(""));
-        string = string.replace("%t-enchant-6%", formatTokenEnchant(""));
-        string = string.replace("%t-enchant-7%", formatTokenEnchant(""));
-        string = string.replace("%t-enchant-8%", formatTokenEnchant(""));
-        string = string.replace("%t-enchant-9%", formatTokenEnchant(""));
-        string = string.replace("%t-enchant-10%", formatTokenEnchant(""));
+    private String formatTokenEnchants(ItemStack itemStack, String string) {
+        List<EnchantReference> refs = EnchantManager.getInstance().getEnchantRefs(itemStack);
+        refs.removeIf(ref -> ref.enchant().getType() == EnchantType.GEM);
+        for (int i = 1; i < refs.size(); i++) {
+            string = string.replace("%t-enchant-{}%".replace("{}", String.valueOf(i)), formatTokenEnchant(refs.get(i - 1)));
+        }
         return string;
     }
 
-    private String formatTokenEnchant(String thisWillBeEnchantObject) {
+    private String formatTokenEnchant(EnchantReference ref) {
         String enchFormat = Config.getInstance().getPickaxe().getTokenEnchantFormat();
         String nonMax = Config.getInstance().getPickaxe().getNotMaxLevel();
         String maxLevel = Config.getInstance().getPickaxe().getMaxLevel();
@@ -55,16 +53,16 @@ public class LoreHandler {
                 .replace("%max%", nonMax);
     }
 
-    private String formatGemEnchants(String string) {
-        string = string.replace("%g-enchant-1%", formatGemEnchant(""));
-        string = string.replace("%g-enchant-2%", formatGemEnchant(""));
-        string = string.replace("%g-enchant-3%", formatGemEnchant(""));
-        string = string.replace("%g-enchant-4%", formatGemEnchant(""));
-        string = string.replace("%g-enchant-5%", formatGemEnchant(""));
+    private String formatGemEnchants(ItemStack itemStack, String string) {
+        List<EnchantReference> refs = EnchantManager.getInstance().getEnchantRefs(itemStack);
+        refs.removeIf(ref -> ref.enchant().getType() == EnchantType.TOKEN);
+        for (int i = 1; i < refs.size(); i++) {
+            string = string.replace("%g-enchant-{}%".replace("{}", String.valueOf(i)), formatGemEnchant(refs.get(i - 1)));
+        }
         return string;
     }
 
-    private String formatGemEnchant(String thisWillBeEnchantObject) {
+    private String formatGemEnchant(EnchantReference ref) {
         String enchFormat = Config.getInstance().getPickaxe().getGemEnchantFormat();
         String nonMax = Config.getInstance().getPickaxe().getNotMaxLevel();
         String maxLevel = Config.getInstance().getPickaxe().getMaxLevel();

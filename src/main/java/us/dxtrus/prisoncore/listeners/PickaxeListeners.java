@@ -5,12 +5,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import us.dxtrus.prisoncore.PickaxeManager;
+import us.dxtrus.prisoncore.pickaxe.PickaxeManager;
 
 public class PickaxeListeners implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         if (PickaxeManager.isPickaxe(e.getCurrentItem())) {
+            e.setCancelled(true);
+        }
+
+        if (e.getHotbarButton() == 0) {
             e.setCancelled(true);
         }
     }
@@ -24,8 +28,9 @@ public class PickaxeListeners implements Listener {
 
     @EventHandler
     public void onOffhand(PlayerSwapHandItemsEvent e) {
-        if (PickaxeManager.isPickaxe(e.getMainHandItem())) {
+        if (PickaxeManager.isPickaxe(e.getOffHandItem())) {
             e.setCancelled(true);
         }
     }
 }
+

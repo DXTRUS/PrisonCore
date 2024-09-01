@@ -1,4 +1,4 @@
-package us.dxtrus.prisoncore;
+package us.dxtrus.prisoncore.pickaxe;
 
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -13,7 +13,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import us.dxtrus.commons.utils.StringUtils;
 import us.dxtrus.commons.utils.TaskManager;
-import us.dxtrus.prisoncore.util.LoreHandler;
+import us.dxtrus.prisoncore.PrisonCore;
+import us.dxtrus.prisoncore.pickaxe.enchants.EnchantManager;
 
 
 @UtilityClass
@@ -24,7 +25,7 @@ public class PickaxeManager {
     public void startLoreUpdater() {
         TaskManager.runAsyncRepeat(plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                givePickaxe(player);
+                updatePickaxe(player);
             }
         }, 40L);
     }
@@ -35,6 +36,13 @@ public class PickaxeManager {
         meta.displayName(StringUtils.modernMessage("&a%s's Pickaxe".formatted(player.getName())).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         meta.getPersistentDataContainer().set(KEY, PersistentDataType.BOOLEAN, true);
         itemStack.setItemMeta(meta);
+        itemStack = EnchantManager.getInstance().applyAllEnchants(itemStack);
+        player.getInventory().setItem(0, LoreHandler.formatLore(itemStack));
+    }
+
+    public void updatePickaxe(Player player) {
+        ItemStack itemStack = player.getInventory().getItemInMainHand();
+        itemStack = EnchantManager.getInstance().applyAllEnchants(itemStack); // update the enchants in case we added a new one!
         player.getInventory().setItem(0, LoreHandler.formatLore(itemStack));
     }
 
