@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.jetbrains.annotations.TestOnly;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.mine.models.Cuboid;
 import us.dxtrus.prisoncore.mine.models.Mine;
@@ -51,6 +52,11 @@ public class JackhammerEnchant extends TokenEnchant {
     }
 
     private boolean shouldProc(int level) {
-        return PrisonCore.getInstance().getRandomBoolean(level * 0.1);
+        return PrisonCore.getInstance().getRandomBoolean(4 * Math.sin((level * Math.PI) / (2 * getMaxLevel())));
+    }
+
+    @TestOnly
+    public static double calculateChance(int level) {
+        return 4 * Math.sin((level * Math.PI) / (2 * 100));
     }
 }
