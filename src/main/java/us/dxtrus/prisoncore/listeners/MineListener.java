@@ -10,7 +10,7 @@ public class MineListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         PrivateMine mine = MineManager.getInstance().getMine(e.getPlayer().getUniqueId());
-        if (!mine.getWorldName().equals(e.getBlock().getWorld().getName())) {
+        if (!mine.getWorldName().equals(e.getBlock().getWorld().getName()) || !mine.getLinkage().getBounds().contains(e.getBlock().getLocation())) {
             e.setCancelled(true);
             return;
         }

@@ -33,16 +33,22 @@ public class PickaxeManager {
         }, 40L);
     }
 
-    public void incrementExp(ItemStack stack) {
+    public void incrementExp(Player player, ItemStack stack) {
         PickaxeStats stats = getStats(stack);
         ItemMeta meta = stack.getItemMeta();
+        meta.getPersistentDataContainer().remove(KEY);
         meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, getDataString(stats.getExperience() + 1, stats.getLevel()));
+        stack.setItemMeta(meta);
+        player.getInventory().setItem(0, stack);
     }
 
-    public void incrementLevel(ItemStack stack) {
+    public void incrementLevel(Player player, ItemStack stack) {
         PickaxeStats stats = getStats(stack);
         ItemMeta meta = stack.getItemMeta();
-        meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, getDataString(stats.getExperience(), stats.getLevel() + 1));
+        meta.getPersistentDataContainer().remove(KEY);
+        meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, getDataString(0, stats.getLevel() + 1));
+        stack.setItemMeta(meta);
+        player.getInventory().setItem(0, stack);
     }
 
     public PickaxeStats getStats(ItemStack itemStack) {

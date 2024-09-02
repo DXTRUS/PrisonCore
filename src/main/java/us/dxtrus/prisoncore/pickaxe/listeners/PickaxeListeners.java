@@ -1,4 +1,4 @@
-package us.dxtrus.prisoncore.listeners;
+package us.dxtrus.prisoncore.pickaxe.listeners;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -7,6 +7,9 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import us.dxtrus.prisoncore.pickaxe.PickaxeManager;
 
+/**
+ * Handles the pickaxe being moved from the first slot.
+ */
 public class PickaxeListeners implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {

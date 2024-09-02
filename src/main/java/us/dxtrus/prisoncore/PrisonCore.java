@@ -16,7 +16,7 @@ import us.dxtrus.prisoncore.pickaxe.enchants.impl.gem.TornadoEnchant;
 import us.dxtrus.prisoncore.pickaxe.listeners.ToolListeners;
 import us.dxtrus.prisoncore.hooks.PAPIHook;
 import us.dxtrus.prisoncore.listeners.MineListener;
-import us.dxtrus.prisoncore.listeners.PickaxeListeners;
+import us.dxtrus.prisoncore.pickaxe.listeners.PickaxeListeners;
 import us.dxtrus.prisoncore.listeners.PlayerListener;
 import us.dxtrus.prisoncore.mine.LocalMineManager;
 import us.dxtrus.prisoncore.mine.MineManager;
