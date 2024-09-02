@@ -35,9 +35,16 @@ public class EnchantManager {
     }
 
     public ItemStack applyAllEnchants(ItemStack itemStack) {
+        // token enchants
+        Enchant jackhammer = enchants.get("jackhammer");
+        if (!getEnchants(itemStack).contains(jackhammer)) {
+            itemStack = applyEnchant(jackhammer, 0, itemStack);
+        }
+
+        // gem enchants
         Enchant tornado = enchants.get("tornado");
         if (!getEnchants(itemStack).contains(tornado)) {
-            itemStack = applyEnchant(tornado, 1, itemStack);
+            itemStack = applyEnchant(tornado, 0, itemStack);
         }
 
         // vanilla enchants & flags

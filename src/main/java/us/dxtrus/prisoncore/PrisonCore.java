@@ -13,6 +13,7 @@ import us.dxtrus.prisoncore.config.Lang;
 import us.dxtrus.prisoncore.pickaxe.PickaxeManager;
 import us.dxtrus.prisoncore.pickaxe.enchants.EnchantManager;
 import us.dxtrus.prisoncore.pickaxe.enchants.impl.gem.TornadoEnchant;
+import us.dxtrus.prisoncore.pickaxe.enchants.impl.token.JackhammerEnchant;
 import us.dxtrus.prisoncore.pickaxe.listeners.ToolListeners;
 import us.dxtrus.prisoncore.hooks.PAPIHook;
 import us.dxtrus.prisoncore.listeners.MineListener;
@@ -63,7 +64,8 @@ public final class PrisonCore extends JavaPlugin {
         ).forEach(BukkitCommandManager.getInstance()::registerCommand);
 
         Stream.of(
-                new TornadoEnchant()
+                new TornadoEnchant(),
+                new JackhammerEnchant()
         ).forEach(EnchantManager.getInstance()::registerEnchant);
 
         Stream.of(
@@ -80,5 +82,9 @@ public final class PrisonCore extends JavaPlugin {
     public void onDisable() {
         broker.destroy();
         StorageManager.getInstance().shutdown();
+    }
+
+    public boolean getRandomBoolean(double percentage) {
+        return random.nextDouble() < (percentage / 100);
     }
 }

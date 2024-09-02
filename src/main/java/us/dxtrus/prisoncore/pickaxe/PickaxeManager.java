@@ -15,15 +15,22 @@ import us.dxtrus.commons.utils.StringUtils;
 import us.dxtrus.commons.utils.TaskManager;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.pickaxe.enchants.EnchantManager;
+import us.dxtrus.prisoncore.pickaxe.enchants.models.Enchant;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @UtilityClass
 public class PickaxeManager {
     private final JavaPlugin plugin = PrisonCore.getInstance();
-    private final NamespacedKey KEY = new NamespacedKey(plugin, "pickaxe");
 
+    private final NamespacedKey KEY = new NamespacedKey(plugin, "pickaxe");
     private static final String PDC_FORMAT = "%level%:%exp%";
 
+    private final Map<UUID, Integer> levelCache = new ConcurrentHashMap<>();
+    private final Map<UUID, Integer> expCache = new ConcurrentHashMap<>();
 
     public void startLoreUpdater() {
         TaskManager.runAsyncRepeat(plugin, () -> {
@@ -33,29 +40,62 @@ public class PickaxeManager {
         }, 40L);
     }
 
-    public void incrementExp(Player player, ItemStack stack) {
-        PickaxeStats stats = getStats(stack);
-        ItemMeta meta = stack.getItemMeta();
-        meta.getPersistentDataContainer().remove(KEY);
-        meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, getDataString(stats.getExperience() + 1, stats.getLevel()));
-        stack.setItemMeta(meta);
-        player.getInventory().setItem(0, stack);
+    public void enchant(Player player, Enchant enchant, int level) {
+        ItemStack itemStack = player.getInventory().getItem(0);
+        if (itemStack == null) {
+            itemStack = new ItemStack(Material.DIAMOND_PICKAXE);
+        }
+        itemStack = EnchantManager.getInstance().applyEnchant(enchant, level, itemStack);
+        player.getInventory().setItem(0, itemStack);
     }
 
-    public void incrementLevel(Player player, ItemStack stack) {
-        PickaxeStats stats = getStats(stack);
-        ItemMeta meta = stack.getItemMeta();
-        meta.getPersistentDataContainer().remove(KEY);
-        meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, getDataString(0, stats.getLevel() + 1));
-        stack.setItemMeta(meta);
-        player.getInventory().setItem(0, stack);
+    public void populateCache(Player player) {
+        ItemStack itemStack = player.getInventory().getItem(0);
+        if (itemStack == null) {
+            itemStack = new ItemStack(Material.DIAMOND_PICKAXE);
+        }
+        PickaxeStats stats = getStats(itemStack);
+        levelCache.put(player.getUniqueId(), stats.getLevel());
+        expCache.put(player.getUniqueId(), stats.getExperience());
+    }
+
+    public int expRequirement(int level) {
+        return (int) Math.round(level * 1000 * 0.75);
+    }
+
+    public void incrementExp(Player player) {
+        incrementExp(player, 1);
+    }
+
+    public void incrementExp(Player player, int amount) {
+        PickaxeStats stats = new PickaxeStats(levelCache.get(player.getUniqueId()), expCache.get(player.getUniqueId()));
+        int expReq = expRequirement(stats.getLevel());
+        if (stats.getExperience() + amount >= expReq) {
+            if (amount == 1) {
+                incrementLevel(player);
+                return;
+            }
+            incrementLevel(player, amount / expReq);
+            incrementExp(player, amount % expReq);
+            return;
+        }
+        expCache.put(player.getUniqueId(), expCache.get(player.getUniqueId()) + amount);
+    }
+
+    public void incrementLevel(Player player) {
+        incrementLevel(player, 1);
+    }
+
+    public void incrementLevel(Player player, int amount) {
+        levelCache.put(player.getUniqueId(), levelCache.get(player.getUniqueId()) + amount);
+        expCache.put(player.getUniqueId(), 0);
     }
 
     public PickaxeStats getStats(ItemStack itemStack) {
         ItemMeta meta = itemStack.getItemMeta();
         String data = meta.getPersistentDataContainer().get(KEY, PersistentDataType.STRING);
         if (data == null) {
-            data = "0:1";
+            data = "1:0";
         }
         int level = Integer.parseInt(data.split(":")[0]);
         int exp = Integer.parseInt(data.split(":")[1]);
@@ -66,7 +106,10 @@ public class PickaxeManager {
         ItemStack itemStack = new ItemStack(Material.DIAMOND_PICKAXE);
         ItemMeta meta = itemStack.getItemMeta();
         meta.displayName(StringUtils.modernMessage("&a%s's Pickaxe".formatted(player.getName())).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
-        meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, getDataString(0, 1));
+        PickaxeStats stats = getStats(itemStack);
+        meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING,
+                getDataString(expCache.getOrDefault(player.getUniqueId(), stats.getExperience()),
+                        levelCache.getOrDefault(player.getUniqueId(), stats.getLevel())));
         itemStack.setItemMeta(meta);
         itemStack = EnchantManager.getInstance().applyAllEnchants(itemStack);
         player.getInventory().setItem(0, LoreHandler.formatLore(itemStack));
@@ -78,6 +121,12 @@ public class PickaxeManager {
             givePickaxe(player);
             return;
         }
+        PickaxeStats stats = getStats(itemStack);
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING,
+                getDataString(expCache.getOrDefault(player.getUniqueId(), stats.getExperience()),
+                        levelCache.getOrDefault(player.getUniqueId(), stats.getLevel())));
+        itemStack.setItemMeta(meta);
         itemStack = EnchantManager.getInstance().applyAllEnchants(itemStack); // update the enchants in case we added a new one!
         player.getInventory().setItem(0, LoreHandler.formatLore(itemStack));
     }

@@ -23,6 +23,7 @@ public class PlayerListener implements Listener {
         if (!player.hasPlayedBefore()) {
             PickaxeManager.givePickaxe(player);
         }
+        PickaxeManager.populateCache(player);
     }
 
     @EventHandler

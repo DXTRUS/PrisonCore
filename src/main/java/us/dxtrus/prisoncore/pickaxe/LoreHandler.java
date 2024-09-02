@@ -25,6 +25,8 @@ public class LoreHandler {
         loreString = formatGemEnchants(itemStack, loreString);
         loreString = formatStats(loreString, PickaxeManager.getStats(itemStack));
 
+        // todo: remove unused placeholders to cleanup the lore
+
         List<Component> newLore = new ArrayList<>();
         for (String str : loreString.split("\n")) {
             newLore.add(StringUtils.modernMessage(str).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
@@ -64,7 +66,7 @@ public class LoreHandler {
 
     private String formatStats(String string, PickaxeStats stats) {
         int current = stats.getExperience();
-        int max = 1000;
+        int max = PickaxeManager.expRequirement(stats.getLevel());
         int progress = (int) ((double) current / max * 100);
         string = string.replace("%level%", stats.getLevel().toString());
         string = string.replace("%xp-bar%", generateProgressBar(current, max));

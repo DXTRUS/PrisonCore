@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import us.dxtrus.commons.command.BukkitCommand;
 import us.dxtrus.commons.command.Command;
 import us.dxtrus.commons.command.user.CommandUser;
+import us.dxtrus.prisoncore.commands.subcommands.admin.AddEnchantCommand;
 import us.dxtrus.prisoncore.commands.subcommands.admin.DeleteAllCommand;
 import us.dxtrus.prisoncore.commands.subcommands.admin.GivePickCommand;
 import us.dxtrus.prisoncore.commands.subcommands.admin.ReloadCommand;
@@ -19,7 +20,8 @@ public class AdminCommand extends BukkitCommand {
         Stream.of(
                 new ReloadCommand(),
                 new DeleteAllCommand(),
-                new GivePickCommand()
+                new GivePickCommand(),
+                new AddEnchantCommand()
         ).forEach(getSubCommands()::add);
     }
 

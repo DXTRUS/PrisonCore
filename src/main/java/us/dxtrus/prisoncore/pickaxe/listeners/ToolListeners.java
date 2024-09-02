@@ -8,7 +8,6 @@ import org.bukkit.inventory.ItemStack;
 import us.dxtrus.prisoncore.mine.MineManager;
 import us.dxtrus.prisoncore.mine.models.PrivateMine;
 import us.dxtrus.prisoncore.pickaxe.PickaxeManager;
-import us.dxtrus.prisoncore.pickaxe.PickaxeStats;
 import us.dxtrus.prisoncore.pickaxe.enchants.EnchantManager;
 import us.dxtrus.prisoncore.pickaxe.enchants.models.EnchantReference;
 import us.dxtrus.prisoncore.pickaxe.enchants.models.EnchantTriggerData;
@@ -27,11 +26,6 @@ public class ToolListeners implements Listener {
             ref.enchant().trigger(new EnchantTriggerData(e.getPlayer(), tool, ref.level(), mine, e));
         }
 
-        PickaxeStats stats = PickaxeManager.getStats(tool);
-        if (stats.getExperience() == 999) {
-            PickaxeManager.incrementLevel(e.getPlayer(), tool);
-        } else {
-            PickaxeManager.incrementExp(e.getPlayer(), tool);
-        }
+        PickaxeManager.incrementExp(e.getPlayer());
     }
 }
