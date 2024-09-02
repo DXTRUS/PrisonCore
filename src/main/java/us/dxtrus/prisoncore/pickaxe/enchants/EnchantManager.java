@@ -2,6 +2,8 @@ package us.dxtrus.prisoncore.pickaxe.enchants;
 
 import lombok.Getter;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -21,7 +23,6 @@ public class EnchantManager {
 
     private final JavaPlugin plugin;
     private static final String PDC_FORMAT = "%enchant%:%level%";
-    private final NamespacedKey enchantApplierKey;
 
     /**
      * Stores a map of enchant Name to ID
@@ -31,7 +32,6 @@ public class EnchantManager {
 
     private EnchantManager(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.enchantApplierKey = new NamespacedKey(plugin, "enchant");
     }
 
     public ItemStack applyAllEnchants(ItemStack itemStack) {
@@ -39,6 +39,13 @@ public class EnchantManager {
         if (!getEnchants(itemStack).contains(tornado)) {
             itemStack = applyEnchant(tornado, 1, itemStack);
         }
+
+        // vanilla enchants & flags
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.setUnbreakable(true);
+        itemStack.setItemMeta(meta);
+        itemStack.addUnsafeEnchantment(Enchantment.EFFICIENCY, 255);
+        itemStack.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_UNBREAKABLE);
         return itemStack;
     }
 
@@ -94,30 +101,6 @@ public class EnchantManager {
             if (pdc.has(getNamespacedKey(enchant))) customEnchants.add(enchant);
         }
         return customEnchants;
-    }
-
-    public Enchant getEnchantFromApplier(ItemStack itemStack) {
-        PersistentDataContainer pdc = itemStack.getItemMeta().getPersistentDataContainer();
-        if (!pdc.has(enchantApplierKey)) return null;
-        return enchants.get(pdc.get(enchantApplierKey, PersistentDataType.STRING).split(":")[0]);
-    }
-
-    public int getLevelFromApplier(ItemStack itemStack) {
-        PersistentDataContainer pdc = itemStack.getItemMeta().getPersistentDataContainer();
-        if (!pdc.has(enchantApplierKey)) return 0;
-        return Integer.parseInt(pdc.get(enchantApplierKey, PersistentDataType.STRING).split(":")[1]);
-    }
-
-    public boolean isEnchantApplier(ItemStack itemStack) {
-        PersistentDataContainer pdc = itemStack.getItemMeta().getPersistentDataContainer();
-        return pdc.has(enchantApplierKey, PersistentDataType.STRING);
-    }
-
-    public ItemStack addPdcToApplier(Enchant enchant, int level, ItemStack itemStack) {
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.getPersistentDataContainer().set(enchantApplierKey, PersistentDataType.STRING, getDataString(enchant, level));
-        itemStack.setItemMeta(itemMeta);
-        return itemStack;
     }
 
     private NamespacedKey getNamespacedKey(Enchant enchant) {

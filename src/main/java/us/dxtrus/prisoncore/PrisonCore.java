@@ -11,6 +11,8 @@ import us.dxtrus.prisoncore.commands.CommandMine;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.config.Lang;
 import us.dxtrus.prisoncore.pickaxe.PickaxeManager;
+import us.dxtrus.prisoncore.pickaxe.enchants.EnchantManager;
+import us.dxtrus.prisoncore.pickaxe.enchants.impl.gem.TornadoEnchant;
 import us.dxtrus.prisoncore.pickaxe.listeners.ToolListeners;
 import us.dxtrus.prisoncore.hooks.PAPIHook;
 import us.dxtrus.prisoncore.listeners.MineListener;
@@ -59,6 +61,10 @@ public final class PrisonCore extends JavaPlugin {
                 new CommandMine(this),
                 new AdminCommand(this)
         ).forEach(BukkitCommandManager.getInstance()::registerCommand);
+
+        Stream.of(
+                new TornadoEnchant()
+        ).forEach(EnchantManager.getInstance()::registerEnchant);
 
         Stream.of(
                 new PlayerListener(this),

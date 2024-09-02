@@ -23,7 +23,7 @@ public class LoreHandler {
         String loreString = Strings.join(lore, '\n');
         loreString = formatTokenEnchants(itemStack, loreString);
         loreString = formatGemEnchants(itemStack, loreString);
-        loreString = formatStats(loreString, "");
+        loreString = formatStats(loreString, PickaxeManager.getStats(itemStack));
 
         List<Component> newLore = new ArrayList<>();
         for (String str : loreString.split("\n")) {
@@ -37,46 +37,36 @@ public class LoreHandler {
     private String formatTokenEnchants(ItemStack itemStack, String string) {
         List<EnchantReference> refs = EnchantManager.getInstance().getEnchantRefs(itemStack);
         refs.removeIf(ref -> ref.enchant().getType() == EnchantType.GEM);
-        for (int i = 1; i < refs.size(); i++) {
-            string = string.replace("%t-enchant-{}%".replace("{}", String.valueOf(i)), formatTokenEnchant(refs.get(i - 1)));
+        for (int i = 1; i <= refs.size(); i++) {
+            string = string.replace("%t-enchant-{}%".replace("{}", String.valueOf(i)), formatEnchantRef(refs.get(i - 1)));
         }
         return string;
-    }
-
-    private String formatTokenEnchant(EnchantReference ref) {
-        String enchFormat = Config.getInstance().getPickaxe().getTokenEnchantFormat();
-        String nonMax = Config.getInstance().getPickaxe().getNotMaxLevel();
-        String maxLevel = Config.getInstance().getPickaxe().getMaxLevel();
-        return enchFormat
-                .replace("%name%", "Skibidi Enchant")
-                .replace("%level%", "700")
-                .replace("%max%", nonMax);
     }
 
     private String formatGemEnchants(ItemStack itemStack, String string) {
         List<EnchantReference> refs = EnchantManager.getInstance().getEnchantRefs(itemStack);
         refs.removeIf(ref -> ref.enchant().getType() == EnchantType.TOKEN);
-        for (int i = 1; i < refs.size(); i++) {
-            string = string.replace("%g-enchant-{}%".replace("{}", String.valueOf(i)), formatGemEnchant(refs.get(i - 1)));
+        for (int i = 1; i <= refs.size(); i++) {
+            string = string.replace("%g-enchant-{}%".replace("{}", String.valueOf(i)), formatEnchantRef(refs.get(i - 1)));
         }
         return string;
     }
 
-    private String formatGemEnchant(EnchantReference ref) {
-        String enchFormat = Config.getInstance().getPickaxe().getGemEnchantFormat();
+    private String formatEnchantRef(EnchantReference ref) {
+        String enchFormat = Config.getInstance().getPickaxe().getTokenEnchantFormat();
         String nonMax = Config.getInstance().getPickaxe().getNotMaxLevel();
         String maxLevel = Config.getInstance().getPickaxe().getMaxLevel();
         return enchFormat
-                .replace("%name%", "Skibidi Enchant")
-                .replace("%level%", "700")
-                .replace("%max%", nonMax);
+                .replace("%name%", ref.enchant().getName())
+                .replace("%level%", "" + ref.level())
+                .replace("%max%", ref.level() == ref.enchant().getMaxLevel() ? maxLevel : nonMax);
     }
 
-    private String formatStats(String string, String thisWilBePickaxeStatsObject) {
-        int current = 20;
-        int max = 100;
+    private String formatStats(String string, PickaxeStats stats) {
+        int current = stats.getExperience();
+        int max = 1000;
         int progress = (int) ((double) current / max * 100);
-        string = string.replace("%level%", "260");
+        string = string.replace("%level%", stats.getLevel().toString());
         string = string.replace("%xp-bar%", generateProgressBar(current, max));
         string = string.replace("%xp-percent%", String.valueOf(progress));
         string = string.replace("%skin%", "&7Default");

@@ -22,6 +22,9 @@ public class PickaxeManager {
     private final JavaPlugin plugin = PrisonCore.getInstance();
     private final NamespacedKey KEY = new NamespacedKey(plugin, "pickaxe");
 
+    private static final String PDC_FORMAT = "%level%:%exp%";
+
+
     public void startLoreUpdater() {
         TaskManager.runAsyncRepeat(plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
@@ -30,18 +33,45 @@ public class PickaxeManager {
         }, 40L);
     }
 
+    public void incrementExp(ItemStack stack) {
+        PickaxeStats stats = getStats(stack);
+        ItemMeta meta = stack.getItemMeta();
+        meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, getDataString(stats.getExperience() + 1, stats.getLevel()));
+    }
+
+    public void incrementLevel(ItemStack stack) {
+        PickaxeStats stats = getStats(stack);
+        ItemMeta meta = stack.getItemMeta();
+        meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, getDataString(stats.getExperience(), stats.getLevel() + 1));
+    }
+
+    public PickaxeStats getStats(ItemStack itemStack) {
+        ItemMeta meta = itemStack.getItemMeta();
+        String data = meta.getPersistentDataContainer().get(KEY, PersistentDataType.STRING);
+        if (data == null) {
+            data = "0:1";
+        }
+        int level = Integer.parseInt(data.split(":")[0]);
+        int exp = Integer.parseInt(data.split(":")[1]);
+        return new PickaxeStats(level, exp);
+    }
+
     public void givePickaxe(Player player) {
         ItemStack itemStack = new ItemStack(Material.DIAMOND_PICKAXE);
         ItemMeta meta = itemStack.getItemMeta();
         meta.displayName(StringUtils.modernMessage("&a%s's Pickaxe".formatted(player.getName())).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
-        meta.getPersistentDataContainer().set(KEY, PersistentDataType.BOOLEAN, true);
+        meta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, getDataString(0, 1));
         itemStack.setItemMeta(meta);
         itemStack = EnchantManager.getInstance().applyAllEnchants(itemStack);
         player.getInventory().setItem(0, LoreHandler.formatLore(itemStack));
     }
 
     public void updatePickaxe(Player player) {
-        ItemStack itemStack = player.getInventory().getItemInMainHand();
+        ItemStack itemStack = player.getInventory().getItem(0);
+        if (itemStack == null) {
+            givePickaxe(player);
+            return;
+        }
         itemStack = EnchantManager.getInstance().applyAllEnchants(itemStack); // update the enchants in case we added a new one!
         player.getInventory().setItem(0, LoreHandler.formatLore(itemStack));
     }
@@ -49,5 +79,11 @@ public class PickaxeManager {
     public boolean isPickaxe(@Nullable ItemStack itemStack) {
         if (itemStack == null) return false;
         return !itemStack.getPersistentDataContainer().isEmpty() && itemStack.getPersistentDataContainer().has(KEY);
+    }
+
+    private String getDataString(int exp, int level) {
+        return PDC_FORMAT
+                .replace("%exp%", String.valueOf(exp))
+                .replace("%level%", String.valueOf(level));
     }
 }
