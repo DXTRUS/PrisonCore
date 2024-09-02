@@ -14,9 +14,12 @@ import us.dxtrus.prisoncore.pickaxe.enchants.models.EnchantType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @UtilityClass
 public class LoreHandler {
+    private final Pattern UNUSED_LORE_PATTERN = Pattern.compile("%[tg]-enchant-\\d+%");
+
     public ItemStack formatLore(ItemStack itemStack) {
         ItemMeta itemMeta = itemStack.getItemMeta();
         List<String> lore = Config.getInstance().getPickaxe().getFormat();
@@ -25,10 +28,9 @@ public class LoreHandler {
         loreString = formatGemEnchants(itemStack, loreString);
         loreString = formatStats(loreString, PickaxeManager.getStats(itemStack));
 
-        // todo: remove unused placeholders to cleanup the lore
-
         List<Component> newLore = new ArrayList<>();
         for (String str : loreString.split("\n")) {
+            if (UNUSED_LORE_PATTERN.matcher(str).find()) continue;
             newLore.add(StringUtils.modernMessage(str).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
         }
         itemMeta.lore(newLore);
