@@ -16,18 +16,17 @@ public class LocRef {
         return new LocRef(location.getBlockX() + 0.5, location.getBlockY() + 0.5, location.getBlockZ() + 0.5);
     }
 
+    public static LocRef deserialize(String serialized) {
+        String[] split = serialized.split(",");
+        return new LocRef(Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
+    }
+
     public Location toBukkit(World world) {
         return new Location(world, x, y, z);
     }
 
-
     public String serialize() {
         return "%s,%s,%s".formatted(x, y, z);
-    }
-
-    public static LocRef deserialize(String serialized) {
-        String[] split = serialized.split(",");
-        return new LocRef(Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
     }
 
     @Override

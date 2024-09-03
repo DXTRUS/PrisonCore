@@ -8,7 +8,6 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 import us.dxtrus.commons.utils.StringUtils;
 import us.dxtrus.commons.utils.TaskManager;
@@ -21,9 +20,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class Broker {
+    public static final Map<String, CompletableFuture<Response>> responses = new ConcurrentHashMap<>();
     protected final PrisonCore plugin;
     protected final Gson gson;
-    public static final Map<String, CompletableFuture<Response>> responses = new ConcurrentHashMap<>();
 
     protected Broker(@NotNull PrisonCore plugin) {
         this.plugin = plugin;

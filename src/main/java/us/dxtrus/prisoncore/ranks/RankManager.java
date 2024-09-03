@@ -10,7 +10,6 @@ public class RankManager {
     private static RankManager instance;
 
 
-
     public static RankManager getInstance() {
         return instance == null ? instance = new RankManager() : instance;
     }

@@ -1,8 +1,6 @@
 package us.dxtrus.prisoncore.gui;
 
 import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
@@ -12,28 +10,31 @@ import org.bukkit.inventory.ItemStack;
 import us.dxtrus.commons.gui.FastInv;
 import us.dxtrus.commons.gui.ItemBuilder;
 
-import java.util.Objects;
 import java.util.function.Function;
 
 @Getter
 public abstract class FastInvImproved extends FastInv {
+    private Material fillerMaterial = Material.AIR;
+
     public FastInvImproved(int size) {
         super(size);
     }
+
     public FastInvImproved(int size, String title) {
         super(size, title);
     }
+
     public FastInvImproved(InventoryType type) {
         super(type);
     }
+
     public FastInvImproved(InventoryType type, String title) {
         super(type, title);
     }
+
     public FastInvImproved(Function<InventoryHolder, Inventory> inventoryFunction) {
         super(inventoryFunction);
     }
-
-    private Material fillerMaterial = Material.AIR;
 
     public void fill() {
         ItemStack filler = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(ChatColor.translateAlternateColorCodes('&', "&f ")).build();

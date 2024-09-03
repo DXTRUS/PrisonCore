@@ -55,7 +55,7 @@ public class Payload {
      * Returns a payload containing a message and a recipient.
      *
      * @param playerUUID the player to send the message to
-     * @param message the message to send
+     * @param message    the message to send
      * @return a payload containing the message
      */
     @NotNull
@@ -112,7 +112,9 @@ public class Payload {
         return Optional.ofNullable(notification);
     }
 
-    public Optional<Broadcast> getBroadcast() { return Optional.ofNullable(broadcast); }
+    public Optional<Broadcast> getBroadcast() {
+        return Optional.ofNullable(broadcast);
+    }
 
     public Optional<String> getString() {
         return Optional.ofNullable(string);

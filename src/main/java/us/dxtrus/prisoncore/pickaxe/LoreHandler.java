@@ -85,7 +85,7 @@ public class LoreHandler {
         int progress = (int) ((double) current / max * 100);
         int numEquals = progress / 10;
 
-        String center = "&a"+xpBarIcon.repeat(Math.max(0, numEquals))+"&c"+xpBarIcon.repeat(Math.max(0, 10 - numEquals));
+        String center = "&a" + xpBarIcon.repeat(Math.max(0, numEquals)) + "&c" + xpBarIcon.repeat(Math.max(0, 10 - numEquals));
         return xpBarFormat.replace("%progress%", center);
     }
 }

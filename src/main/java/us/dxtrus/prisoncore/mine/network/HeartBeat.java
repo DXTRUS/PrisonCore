@@ -7,8 +7,8 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 import us.dxtrus.commons.utils.TaskManager;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.util.LogUtil;
@@ -33,6 +33,13 @@ public final class HeartBeat {
         config.setTestOnReturn(true);
 
         this.jedisPool = new JedisPool(config, "127.0.0.1", 6379, 0, "redis password");
+    }
+
+    public static HeartBeat getInstance() {
+        if (instance == null) {
+            instance = new HeartBeat(PrisonCore.getInstance());
+        }
+        return instance;
     }
 
     public void connect() {
@@ -127,14 +134,6 @@ public final class HeartBeat {
         return 00.0;
     }
 
-    public boolean isOnline(String server) {
-        JsonObject serverObj = getServerObject(server);
-        if (serverObj != null) {
-            return getLastHeartbeat(server) >= System.currentTimeMillis() - 4000;
-        }
-        return false;
-    }
-
 //    public long[] getOnlineTime(String server) {
 //        JsonObject serverObj = getServerObject(server);
 //        if (serverObj != null) {
@@ -153,6 +152,14 @@ public final class HeartBeat {
 //        return "0s";
 //    }
 
+    public boolean isOnline(String server) {
+        JsonObject serverObj = getServerObject(server);
+        if (serverObj != null) {
+            return getLastHeartbeat(server) >= System.currentTimeMillis() - 4000;
+        }
+        return false;
+    }
+
     public long getLastHeartbeat(String server) {
         JsonObject serverObj = getServerObject(server);
         if (serverObj != null) {
@@ -167,12 +174,5 @@ public final class HeartBeat {
             return Long.parseLong(serverObj.get("startTime").toString());
         }
         return 0;
-    }
-
-    public static HeartBeat getInstance() {
-        if (instance == null) {
-            instance = new HeartBeat(PrisonCore.getInstance());
-        }
-        return instance;
     }
 }

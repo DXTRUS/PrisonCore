@@ -8,9 +8,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.dxtrus.commons.utils.TaskManager;
-import us.dxtrus.prisoncore.pickaxe.PickaxeManager;
 import us.dxtrus.prisoncore.mine.MineManager;
 import us.dxtrus.prisoncore.mine.network.TransferManager;
+import us.dxtrus.prisoncore.pickaxe.PickaxeManager;
 
 @RequiredArgsConstructor
 public class PlayerListener implements Listener {

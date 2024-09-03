@@ -16,6 +16,7 @@ public class ResetMineCommand extends BasicSubCommand {
     public ResetMineCommand() {
         super();
     }
+
     @Override
     public void execute(CommandUser commandUser, String[] strings) {
         if (!Config.getInstance().getCommands().isReset()) {

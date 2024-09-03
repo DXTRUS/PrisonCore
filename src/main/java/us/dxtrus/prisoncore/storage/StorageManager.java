@@ -23,6 +23,14 @@ public class StorageManager {
         LogUtil.debug("Connected to Database and populated caches!");
     }
 
+    public static StorageManager getInstance() {
+        if (instance == null) {
+            instance = new StorageManager();
+            instance.handler.connect();
+        }
+        return instance;
+    }
+
     public <T extends DatabaseObject> CompletableFuture<List<T>> getAll(Class<T> clazz) {
         if (!isConnected()) {
             LogUtil.severe("Tried to perform database action when the database is not connected!");
@@ -41,8 +49,9 @@ public class StorageManager {
 
     /**
      * Search the database for something matching name.
+     *
      * @param clazz the class to search for.
-     * @param name the name, either a username or a servername.
+     * @param name  the name, either a username or a servername.
      * @return a completable future of the optional object or an empty optional
      */
     public <T extends DatabaseObject> CompletableFuture<Optional<T>> search(Class<T> clazz, String name) {
@@ -106,13 +115,5 @@ public class StorageManager {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static StorageManager getInstance() {
-        if (instance == null) {
-            instance = new StorageManager();
-            instance.handler.connect();
-        }
-        return instance;
     }
 }

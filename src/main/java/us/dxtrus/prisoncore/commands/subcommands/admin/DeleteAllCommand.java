@@ -11,6 +11,7 @@ public class DeleteAllCommand extends BasicSubCommand {
     public DeleteAllCommand() {
         super();
     }
+
     @Override
     public void execute(CommandUser commandUser, String[] strings) {
         MessageUtils.send(commandUser.getAudience(), "Deleting...");

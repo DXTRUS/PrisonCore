@@ -1,12 +1,10 @@
 package us.dxtrus.prisoncore.stats;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import us.dxtrus.commons.database.DatabaseObject;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.UUID;
 

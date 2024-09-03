@@ -20,11 +20,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EnchantManager {
-    private static EnchantManager instance;
-
-    private final JavaPlugin plugin;
     private static final String PDC_FORMAT = "%enchant%:%level%";
-
+    private static EnchantManager instance;
+    private final JavaPlugin plugin;
     /**
      * Stores a map of enchant Name to ID
      */
@@ -33,6 +31,13 @@ public class EnchantManager {
 
     private EnchantManager(JavaPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    public static EnchantManager getInstance() {
+        if (instance == null) {
+            instance = new EnchantManager(PrisonCore.getInstance());
+        }
+        return instance;
     }
 
     public ItemStack applyVanillaEnchants(ItemStack itemStack) {
@@ -83,7 +88,8 @@ public class EnchantManager {
         PersistentDataContainer pdc = itemStack.getItemMeta().getPersistentDataContainer();
         for (Enchant enchant : enchants.values()) {
             NamespacedKey key = getNamespacedKey(enchant);
-            if (pdc.has(key)) customEnchants.add(new EnchantReference(enchant, getLevelFromData(pdc.get(key, PersistentDataType.STRING))));
+            if (pdc.has(key))
+                customEnchants.add(new EnchantReference(enchant, getLevelFromData(pdc.get(key, PersistentDataType.STRING))));
         }
         customEnchants.sort(Comparator.comparingInt(EnchantReference::level).reversed());
         return customEnchants;
@@ -111,13 +117,5 @@ public class EnchantManager {
 
     private int getLevelFromData(String dataString) {
         return Integer.parseInt(dataString.split(":")[1]);
-    }
-
-
-    public static EnchantManager getInstance() {
-        if (instance == null) {
-            instance = new EnchantManager(PrisonCore.getInstance());
-        }
-        return instance;
     }
 }

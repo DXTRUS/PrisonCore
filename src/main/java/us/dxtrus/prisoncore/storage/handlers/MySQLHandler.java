@@ -20,12 +20,8 @@ import java.util.*;
 
 public class MySQLHandler implements DatabaseHandler {
     private final Map<Class<?>, Dao<?>> daos = new HashMap<>();
-
-    private static MySQLHandler instance;
-    @Getter
-    private boolean connected = false;
-
     private final String driverClass;
+    @Getter private boolean connected = false;
     private HikariDataSource dataSource;
 
     public MySQLHandler() {
@@ -98,7 +94,6 @@ public class MySQLHandler implements DatabaseHandler {
         registerDaos();
     }
 
-
     public void destroy() {
         if (dataSource != null) dataSource.close();
     }
@@ -163,9 +158,5 @@ public class MySQLHandler implements DatabaseHandler {
         if (!daos.containsKey(clazz))
             throw new IllegalArgumentException("No DAO registered for class " + clazz.getName());
         return (Dao<T>) daos.get(clazz);
-    }
-
-    public static MySQLHandler getInstance() {
-        return instance == null ? instance = new MySQLHandler() : instance;
     }
 }

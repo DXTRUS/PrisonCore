@@ -31,11 +31,18 @@ import java.util.stream.StreamSupport;
  * </code>
  * </pre>
  *
- *
- * @author Olivier Grégoire
  * @param <T>
+ * @author Olivier Grégoire
  */
 public final class RandomSelector<T> {
+
+    private final T[] elements;
+    private final ToIntFunction<Random> selection;
+
+    RandomSelector(final T[] elements, final ToIntFunction<Random> selection) {
+        this.elements = elements;
+        this.selection = selection;
+    }
 
     /**
      * Creates a new random selector based on a uniform distribution.
@@ -98,14 +105,6 @@ public final class RandomSelector<T> {
         return new RandomSelector<>(elementArray, new RandomWeightedSelection(discreteProbabilities));
     }
 
-    private final T[] elements;
-    private final ToIntFunction<Random> selection;
-
-    RandomSelector(final T[] elements, final ToIntFunction<Random> selection) {
-        this.elements = elements;
-        this.selection = selection;
-    }
-
     /**
      * Returns the next element using <tt>random</tt>.
      *
@@ -132,25 +131,6 @@ public final class RandomSelector<T> {
         Objects.requireNonNull(random, "random must not be null");
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(new BaseIterator(random), Spliterator.IMMUTABLE | Spliterator.ORDERED),
                 false);
-    }
-
-    private class BaseIterator implements Iterator<T> {
-
-        private final Random random;
-
-        BaseIterator(final Random random) {
-            this.random = random;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return true;
-        }
-
-        @Override
-        public T next() {
-            return RandomSelector.this.next(this.random);
-        }
     }
 
     private static class RandomWeightedSelection implements ToIntFunction<Random> {
@@ -206,6 +186,25 @@ public final class RandomSelector<T> {
         public int applyAsInt(final Random random) {
             final int column = random.nextInt(probabilities.length);
             return random.nextDouble() < probabilities[column] ? column : alias[column];
+        }
+    }
+
+    private class BaseIterator implements Iterator<T> {
+
+        private final Random random;
+
+        BaseIterator(final Random random) {
+            this.random = random;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return true;
+        }
+
+        @Override
+        public T next() {
+            return RandomSelector.this.next(this.random);
         }
     }
 }

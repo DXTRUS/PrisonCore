@@ -26,6 +26,23 @@ public final class RedisBroker extends Broker {
         this.subscriber = new Subscriber(this);
     }
 
+    @NotNull
+    private static Pool<Jedis> getJedisPool() {
+        Config.Redis redisConfig = Config.getInstance().getRedis();
+        final String password = redisConfig.getPassword();
+        final String host = redisConfig.getHost();
+        final int port = redisConfig.getPort();
+
+        final JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxIdle(0);
+        config.setTestOnBorrow(true);
+        config.setTestOnReturn(true);
+
+        return password.isEmpty()
+                ? new JedisPool(config, host, port, 0, false)
+                : new JedisPool(config, host, port, 0, password, false);
+    }
+
     @Blocking
     @Override
     public void connect() throws IllegalStateException {
@@ -43,7 +60,6 @@ public final class RedisBroker extends Broker {
         thread.start();
     }
 
-
     @Override
     protected void send(@NotNull Message message) {
         TaskManager.runAsync(plugin, () -> subscriber.send(message));
@@ -53,23 +69,6 @@ public final class RedisBroker extends Broker {
     @Blocking
     public void destroy() {
         subscriber.disable();
-    }
-
-    @NotNull
-    private static Pool<Jedis> getJedisPool() {
-        Config.Redis redisConfig = Config.getInstance().getRedis();
-        final String password = redisConfig.getPassword();
-        final String host = redisConfig.getHost();
-        final int port = redisConfig.getPort();
-
-        final JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxIdle(0);
-        config.setTestOnBorrow(true);
-        config.setTestOnReturn(true);
-
-        return password.isEmpty()
-                ? new JedisPool(config, host, port, 0, false)
-                : new JedisPool(config, host, port, 0, password, false);
     }
 
     @AllArgsConstructor

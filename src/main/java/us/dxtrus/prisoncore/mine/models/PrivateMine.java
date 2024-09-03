@@ -4,11 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import us.dxtrus.commons.utils.StringUtils;
-import us.dxtrus.commons.utils.TaskManager;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.config.Lang;
 import us.dxtrus.prisoncore.mine.LocalMineManager;
@@ -20,15 +17,13 @@ import java.util.UUID;
 @Getter
 @Setter
 public class PrivateMine implements PrivateWorld {
-    private boolean loaded;
-    private Server server;
     private final UUID owner;
     private final String worldName;
-
     private final LocRef spawnLocation;
-    private LocRef npcLocation;
-
     private final LocRef center;
+    private boolean loaded;
+    private Server server;
+    private LocRef npcLocation;
     private int level;
 
     public PrivateMine(@NotNull UUID owner) {

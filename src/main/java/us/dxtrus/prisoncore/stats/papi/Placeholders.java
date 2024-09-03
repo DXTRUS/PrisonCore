@@ -9,15 +9,34 @@ import us.dxtrus.prisoncore.stats.Statistics;
 import us.dxtrus.prisoncore.stats.StatsManager;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 @Getter
 public class Placeholders extends PlaceholderExpansion {
+    private static final String[] SUFFIXES = {
+            "", "k", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No"
+    };
+    private static final BigDecimal THOUSAND = BigDecimal.valueOf(1000);
     private final String identifier = "prisoncore";
     private final String version = "1.0.0";
     private final String author = "DXTRUS";
+
+    public static String formatBigInteger(BigDecimal value, boolean formatDecimals) {
+        int suffixIndex = 0;
+
+        while (value.compareTo(THOUSAND) >= 0 && suffixIndex < SUFFIXES.length - 1) {
+            value = value.divide(THOUSAND);
+            suffixIndex++;
+        }
+
+        return formatWithSuffix(value, SUFFIXES[suffixIndex], formatDecimals);
+    }
+
+    private static String formatWithSuffix(BigDecimal value, String suffix, boolean formatDecimals) {
+        DecimalFormat df = new DecimalFormat(formatDecimals ? "#.00" : "#.##");
+        // Format the value directly, no remainder added back.
+        return df.format(value) + suffix;
+    }
 
     @Override
     public boolean persist() {
@@ -70,28 +89,5 @@ public class Placeholders extends PlaceholderExpansion {
         }
 
         return "&cN/A&r";
-    }
-
-    private static final String[] SUFFIXES = {
-            "", "k", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No"
-    };
-
-    private static final BigDecimal THOUSAND = BigDecimal.valueOf(1000);
-
-    public static String formatBigInteger(BigDecimal value, boolean formatDecimals) {
-        int suffixIndex = 0;
-
-        while (value.compareTo(THOUSAND) >= 0 && suffixIndex < SUFFIXES.length - 1) {
-            value = value.divide(THOUSAND);
-            suffixIndex++;
-        }
-
-        return formatWithSuffix(value, SUFFIXES[suffixIndex], formatDecimals);
-    }
-
-    private static String formatWithSuffix(BigDecimal value, String suffix, boolean formatDecimals) {
-        DecimalFormat df = new DecimalFormat(formatDecimals ? "#.00" : "#.##");
-        // Format the value directly, no remainder added back.
-        return df.format(value) + suffix;
     }
 }

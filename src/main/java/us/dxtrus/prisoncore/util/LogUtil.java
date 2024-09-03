@@ -8,6 +8,10 @@ import java.util.logging.Logger;
 public class LogUtil {
     private static final Logger logger = Logger.getLogger("PrisonCore");
 
+    private LogUtil() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
+
     public static void info(@NotNull String message) {
         logger.log(Level.INFO, message);
     }
@@ -30,9 +34,5 @@ public class LogUtil {
 
     public static void debug(@NotNull String message) {
         logger.log(Level.FINE, message);
-    }
-
-    private LogUtil() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }

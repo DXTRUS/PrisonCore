@@ -12,6 +12,7 @@ public class ReloadCommand extends BasicSubCommand {
     public ReloadCommand() {
         super();
     }
+
     @Override
     public void execute(CommandUser commandUser, String[] strings) {
         try {

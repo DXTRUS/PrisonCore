@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MineManager {
     private static MineManager instance;
+    private final Map<UUID, PrivateMine> loadedMines = new ConcurrentHashMap<>();
 
     public static MineManager getInstance() {
         if (instance == null) {
@@ -28,8 +29,6 @@ public class MineManager {
         }
         return instance;
     }
-
-    private final Map<UUID, PrivateMine> loadedMines = new ConcurrentHashMap<>();
 
     public PrivateMine getMine(UUID player) {
         PrivateMine mine = loadedMines.get(player);

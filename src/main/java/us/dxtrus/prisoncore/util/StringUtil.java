@@ -3,7 +3,6 @@ package us.dxtrus.prisoncore.util;
 import net.md_5.bungee.api.ChatColor;
 import us.dxtrus.prisoncore.PrisonCore;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
 
 public final class StringUtil {

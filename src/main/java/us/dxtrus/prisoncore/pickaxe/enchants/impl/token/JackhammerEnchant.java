@@ -26,6 +26,11 @@ import java.util.concurrent.atomic.AtomicInteger;
         icon = Material.ANVIL
 )
 public class JackhammerEnchant extends TokenEnchant {
+    @TestOnly
+    public static double calculateChance(int level) {
+        return 4 * Math.sin((level * Math.PI) / (2 * 100));
+    }
+
     @Override
     public void trigger(EnchantTriggerData data) {
         if (!(data.getCallingEvent() instanceof BlockBreakEvent event)) return;
@@ -53,10 +58,5 @@ public class JackhammerEnchant extends TokenEnchant {
 
     private boolean shouldProc(int level) {
         return PrisonCore.getInstance().getRandomBoolean(4 * Math.sin((level * Math.PI) / (2 * getMaxLevel())));
-    }
-
-    @TestOnly
-    public static double calculateChance(int level) {
-        return 4 * Math.sin((level * Math.PI) / (2 * 100));
     }
 }
