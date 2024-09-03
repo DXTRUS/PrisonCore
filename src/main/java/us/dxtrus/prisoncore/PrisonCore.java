@@ -2,6 +2,8 @@ package us.dxtrus.prisoncore;
 
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.dxtrus.commons.command.BukkitCommandManager;
 import us.dxtrus.commons.gui.FastInvManager;
@@ -84,6 +86,13 @@ public final class PrisonCore extends JavaPlugin {
     public void onDisable() {
         broker.destroy();
         StorageManager.getInstance().shutdown();
+        for (World world : Bukkit.getWorlds()) {
+            world.getEntities().forEach(e -> {
+                if (!(e instanceof ArmorStand ars)) return;
+                if (ars.isVisible()) return;
+                ars.remove();
+            });
+        }
     }
 
     public boolean getRandomBoolean(double percentage) {
