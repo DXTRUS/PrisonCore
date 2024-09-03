@@ -13,6 +13,7 @@ import us.dxtrus.prisoncore.config.Lang;
 import us.dxtrus.prisoncore.pickaxe.PickaxeManager;
 import us.dxtrus.prisoncore.pickaxe.enchants.EnchantManager;
 import us.dxtrus.prisoncore.pickaxe.enchants.impl.gem.TornadoEnchant;
+import us.dxtrus.prisoncore.pickaxe.enchants.impl.token.GemFinderEnchant;
 import us.dxtrus.prisoncore.pickaxe.enchants.impl.token.JackhammerEnchant;
 import us.dxtrus.prisoncore.pickaxe.listeners.ToolListeners;
 import us.dxtrus.prisoncore.hooks.PAPIHook;
@@ -65,7 +66,8 @@ public final class PrisonCore extends JavaPlugin {
 
         Stream.of(
                 new TornadoEnchant(),
-                new JackhammerEnchant()
+                new JackhammerEnchant(),
+                new GemFinderEnchant()
         ).forEach(EnchantManager.getInstance()::registerEnchant);
 
         Stream.of(

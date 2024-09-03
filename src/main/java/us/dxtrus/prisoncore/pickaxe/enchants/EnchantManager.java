@@ -35,20 +35,7 @@ public class EnchantManager {
         this.plugin = plugin;
     }
 
-    public ItemStack applyAllEnchants(ItemStack itemStack) {
-        // token enchants
-        Enchant jackhammer = enchants.get("jackhammer");
-        if (!getEnchants(itemStack).contains(jackhammer)) {
-            itemStack = applyEnchant(jackhammer, 0, itemStack);
-        }
-
-        // gem enchants
-        Enchant tornado = enchants.get("tornado");
-        if (!getEnchants(itemStack).contains(tornado)) {
-            itemStack = applyEnchant(tornado, 0, itemStack);
-        }
-
-        // vanilla enchants & flags
+    public ItemStack applyVanillaEnchants(ItemStack itemStack) {
         ItemMeta meta = itemStack.getItemMeta();
         meta.setUnbreakable(true);
         itemStack.setItemMeta(meta);
@@ -98,7 +85,7 @@ public class EnchantManager {
             NamespacedKey key = getNamespacedKey(enchant);
             if (pdc.has(key)) customEnchants.add(new EnchantReference(enchant, getLevelFromData(pdc.get(key, PersistentDataType.STRING))));
         }
-        customEnchants.sort(Comparator.comparingInt(EnchantReference::level));
+        customEnchants.sort(Comparator.comparingInt(EnchantReference::level).reversed());
         return customEnchants;
     }
 

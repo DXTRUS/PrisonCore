@@ -111,7 +111,7 @@ public class PickaxeManager {
                 getDataString(expCache.getOrDefault(player.getUniqueId(), stats.getExperience()),
                         levelCache.getOrDefault(player.getUniqueId(), stats.getLevel())));
         itemStack.setItemMeta(meta);
-        itemStack = EnchantManager.getInstance().applyAllEnchants(itemStack);
+        itemStack = EnchantManager.getInstance().applyVanillaEnchants(itemStack);
         player.getInventory().setItem(0, LoreHandler.formatLore(itemStack));
     }
 
@@ -127,7 +127,7 @@ public class PickaxeManager {
                 getDataString(expCache.getOrDefault(player.getUniqueId(), stats.getExperience()),
                         levelCache.getOrDefault(player.getUniqueId(), stats.getLevel())));
         itemStack.setItemMeta(meta);
-        itemStack = EnchantManager.getInstance().applyAllEnchants(itemStack); // update the enchants in case we added a new one!
+        itemStack = EnchantManager.getInstance().applyVanillaEnchants(itemStack);
         player.getInventory().setItem(0, LoreHandler.formatLore(itemStack));
     }
 
