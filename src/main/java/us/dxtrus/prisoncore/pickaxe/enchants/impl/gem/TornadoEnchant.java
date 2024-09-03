@@ -99,7 +99,7 @@ public class TornadoEnchant extends GemEnchant {
     }
 
     private boolean shouldProc(int level) {
-        return PrisonCore.getInstance().getRandomBoolean(1 * Math.sin((level * Math.PI) / (2 * getMaxLevel())));
+        return PrisonCore.getInstance().getRandomBoolean(0.5 * Math.sin((level * Math.PI) / (2 * getMaxLevel())));
     }
 
     private double calcHeight(int level) {
