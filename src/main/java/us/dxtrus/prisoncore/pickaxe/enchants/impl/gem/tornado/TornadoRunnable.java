@@ -17,19 +17,18 @@ import java.util.List;
 import java.util.UUID;
 
 public class TornadoRunnable extends BukkitRunnable {
-    private final UUID player;
     private final Location center;
     private final List<MineMaterial> blockTypes;
     private final int height;
     private final int baseRadius;
     private final List<UUID> armorStands = new ArrayList<>();
     private double angle = 0;
-    private final double wobbleFrequency = 0.3;
-    private final double wobbleAmplitude = 2.0;
-    private final double spinSpeed = Math.PI / 32;
 
-    public TornadoRunnable(UUID player, Location center, List<MineMaterial> blockTypes, int height, int baseRadius) {
-        this.player = player;
+    private static final double wobbleFrequency = 0.3;
+    private static final double wobbleAmplitude = 2.0;
+    private static final double spinSpeed = Math.PI / 32;
+
+    public TornadoRunnable(Location center, List<MineMaterial> blockTypes, int height, int baseRadius) {
         this.center = center;
         this.blockTypes = blockTypes;
         this.height = height;

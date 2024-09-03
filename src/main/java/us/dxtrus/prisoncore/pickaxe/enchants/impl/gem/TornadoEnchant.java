@@ -2,7 +2,6 @@ package us.dxtrus.prisoncore.pickaxe.enchants.impl.gem;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -16,7 +15,10 @@ import us.dxtrus.prisoncore.pickaxe.enchants.models.EnchantInfo;
 import us.dxtrus.prisoncore.pickaxe.enchants.models.EnchantTriggerData;
 import us.dxtrus.prisoncore.pickaxe.enchants.models.GemEnchant;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @EnchantInfo(
         id = "tornado",
@@ -47,7 +49,7 @@ public class TornadoEnchant extends GemEnchant {
     private void startTornado(UUID player, Location center, List<MineMaterial> blockTypes, int height, int baseRadius) {
         stopTornado(player);
 
-        TornadoRunnable tornadoRunnable = new TornadoRunnable(player, center, blockTypes, height, baseRadius);
+        TornadoRunnable tornadoRunnable = new TornadoRunnable(center, blockTypes, height, baseRadius);
         armourStandsRunnable.put(player, tornadoRunnable);
         tornadoRunnable.runTaskTimer(PrisonCore.getInstance(), 0, 1);
     }
