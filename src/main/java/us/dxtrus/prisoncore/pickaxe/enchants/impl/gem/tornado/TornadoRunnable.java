@@ -45,7 +45,7 @@ public class TornadoRunnable extends BukkitRunnable {
                 double angle = (Math.PI * 2 / numStands) * j;
                 double x = currentRadius * Math.cos(angle);
                 double z = currentRadius * Math.sin(angle);
-                Location loc = center.clone().add(x, -i + 20, z);
+                Location loc = center.clone().add(x, -i + height, z);
 
                 ArmorStand armorStand = spawnArmorStand(center.getWorld(), loc, sel.next(PrisonCore.getInstance().getRandom()).getMaterial());
                 armorStands.add(armorStand.getUniqueId());
@@ -91,7 +91,7 @@ public class TornadoRunnable extends BukkitRunnable {
                 z = currentRadius * Math.sin(currentAngle + spinAngle) + wobbleZ;
             }
 
-            Location loc = center.clone().add(x, -layer + 20, z);
+            Location loc = center.clone().add(x, -layer + height, z);
             armorStand.teleportAsync(loc);
         }
     }

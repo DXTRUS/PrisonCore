@@ -38,9 +38,12 @@ public class TornadoEnchant extends GemEnchant {
         if (!(data.getCallingEvent() instanceof BlockBreakEvent event)) return;
         if (!shouldProc(data.getLevel())) return;
 
-        startTornado(data.getPlayer().getUniqueId(), event.getBlock().getLocation(), data.getMine().getLinkage().getMaterials(), 20, 10);
+        int height = (int) calcHeight(data.getLevel());
+        int radius = (int) calcRadius(data.getLevel());
 
-        removeBlocks(data.getPlayer(), data.getMine().getLinkage(), event.getBlock().getLocation(), 20, 10);
+        startTornado(data.getPlayer().getUniqueId(), event.getBlock().getLocation(), data.getMine().getLinkage().getMaterials(), height, radius);
+
+        removeBlocks(data.getPlayer(), data.getMine().getLinkage(), event.getBlock().getLocation(), height, radius);
 
         TaskManager.runSyncDelayed(PrisonCore.getInstance(),
                 () -> stopTornado(data.getPlayer().getUniqueId()), 130L);
@@ -97,5 +100,13 @@ public class TornadoEnchant extends GemEnchant {
 
     private boolean shouldProc(int level) {
         return PrisonCore.getInstance().getRandomBoolean(1 * Math.sin((level * Math.PI) / (2 * getMaxLevel())));
+    }
+
+    private double calcHeight(int level) {
+        return 30 * Math.sin((level * Math.PI) / (2 * getMaxLevel()));
+    }
+
+    private double calcRadius(int level) {
+        return 25 * Math.sin((level * Math.PI) / (2 * getMaxLevel()));
     }
 }
