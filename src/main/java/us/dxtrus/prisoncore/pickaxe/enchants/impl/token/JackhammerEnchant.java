@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @EnchantInfo(
         id = "jackhammer",
         name = "&bJack Hammer",
-        maxLevel = 100,
+        maxLevel = 10000,
         description = {
                 "&fHas a chance to break a",
                 "&flayer of your mine."

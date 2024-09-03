@@ -14,6 +14,7 @@ import us.dxtrus.prisoncore.pickaxe.enchants.models.Enchant;
 import us.dxtrus.prisoncore.pickaxe.enchants.models.EnchantReference;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -97,6 +98,7 @@ public class EnchantManager {
             NamespacedKey key = getNamespacedKey(enchant);
             if (pdc.has(key)) customEnchants.add(new EnchantReference(enchant, getLevelFromData(pdc.get(key, PersistentDataType.STRING))));
         }
+        customEnchants.sort(Comparator.comparingInt(EnchantReference::level));
         return customEnchants;
     }
 
