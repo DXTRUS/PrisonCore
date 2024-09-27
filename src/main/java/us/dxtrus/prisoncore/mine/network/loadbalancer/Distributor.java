@@ -1,5 +1,6 @@
 package us.dxtrus.prisoncore.mine.network.loadbalancer;
 
+import org.bukkit.Bukkit;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.mine.models.Server;
 import us.dxtrus.prisoncore.mine.models.ServerType;
@@ -9,7 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public enum Distributor {
-    ROUND_ROBBIN {
+    ROUND_ROBIN {
         @Override
         public Server getServer() {
             List<Server> servers = ServerManager.getInstance().getAllServers();
@@ -27,8 +28,11 @@ public enum Distributor {
     LOWEST_PLAYER {
         @Override
         public Server getServer() {
+            Bukkit.broadcastMessage("getting lowest player count");
             List<Server> servers = ServerManager.getInstance().getAllServers();
+            Bukkit.broadcastMessage(servers.size() + " servers found");
             servers.removeIf(server -> server.getType() != ServerType.MINE);
+            Bukkit.broadcastMessage(servers.size() + " servers after pruning");
             servers.sort(Comparator.comparingInt(Server::getPlayerCount));
             return servers.getFirst();
         }

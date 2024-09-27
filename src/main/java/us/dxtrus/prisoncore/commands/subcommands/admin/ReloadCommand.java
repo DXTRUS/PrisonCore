@@ -21,6 +21,7 @@ public class ReloadCommand extends BasicSubCommand {
             MessageUtils.send(commandUser.getAudience(), Lang.getInstance().getCommand().getReload().getSuccess());
         } catch (Exception e) {
             MessageUtils.send(commandUser.getAudience(), Lang.getInstance().getCommand().getReload().getFail());
+            throw new RuntimeException(e);
         }
     }
 }

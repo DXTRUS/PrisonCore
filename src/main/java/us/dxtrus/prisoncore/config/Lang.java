@@ -71,7 +71,7 @@ public class Lang {
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class Reload {
             private String success = "{prefix} &fReload &asuccess";
-            private String fail = "{prefix} %fReload &cfailed&f. Check console.";
+            private String fail = "{prefix} &fReload &cfailed&f. Check console.";
         }
     }
 

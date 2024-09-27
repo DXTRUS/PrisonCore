@@ -14,14 +14,18 @@ import us.dxtrus.commons.utils.TaskManager;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.config.Lang;
+import us.dxtrus.prisoncore.mine.LocalMineManager;
+import us.dxtrus.prisoncore.mine.MineManager;
+import us.dxtrus.prisoncore.mine.models.PrivateMine;
 import us.dxtrus.prisoncore.mine.network.ServerManager;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class Broker {
-    public static final Map<String, CompletableFuture<Response>> responses = new ConcurrentHashMap<>();
+    public static final Map<UUID, CompletableFuture<Response>> responses = new ConcurrentHashMap<>();
     protected final PrisonCore plugin;
     protected final Gson gson;
 
@@ -32,16 +36,34 @@ public abstract class Broker {
 
     protected void handle(@NotNull Message message) {
         switch (message.getType()) {
-            case MINE_UNLOAD -> message.getPayload()
-                    .getString().ifPresent(worldName -> {
+            case MINE_LOAD -> message.getPayload()
+                    .getRequest().ifPresent(request -> {
+                        Bukkit.broadcastMessage(request.toString());
+                        if (!request.getPerformingServer()
+                                .equals(ServerManager.getInstance().getThisServer().getName())) {
+                            return;
+                        }
+                        PrivateMine mine = MineManager.getInstance().getMine(request.getMine());
+                        LocalMineManager.getInstance().load(mine);
+                    });
 
+            case MINE_UNLOAD -> message.getPayload()
+                    .getRequest().ifPresent(request -> {
+                        if (!request.getPerformingServer()
+                                .equals(ServerManager.getInstance().getThisServer().getName())) {
+                            return;
+                        }
+                        PrivateMine mine = MineManager.getInstance().getMine(request.getMine());
+                        LocalMineManager.getInstance().unload(mine);
                     });
 
             case MINE_LOAD_RESPONSE, MINE_UNLOAD_RESPONSE -> message.getPayload()
                     .getResponse().ifPresent(response -> {
-                        CompletableFuture<Response> future = responses.remove(response.getMineWorld());
+                        Bukkit.broadcastMessage(response.toString());
+                        CompletableFuture<Response> future = responses.remove(response.getMine());
                         if (future == null) {
                             // do nothing, this instance doesn't hold the handler for the world (un)load.
+                            Bukkit.broadcastMessage("abort mission, we dont want this response");
                             return;
                         }
                         future.complete(response);

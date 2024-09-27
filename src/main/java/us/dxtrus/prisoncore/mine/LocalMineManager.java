@@ -107,7 +107,7 @@ public class LocalMineManager {
                 TaskManager.runAsync(PrisonCore.getInstance(), () ->
                         Message.builder()
                                 .type(Message.Type.MINE_LOAD_RESPONSE)
-                                .payload(Payload.withResponse(new Response(ResponseType.SUCCESS, mine.getWorldName(), "")))
+                                .payload(Payload.withResponse(new Response(ResponseType.SUCCESS, mine.getOwner(), "")))
                                 .build().send(PrisonCore.getInstance().getBroker()));
             });
 
@@ -115,28 +115,28 @@ public class LocalMineManager {
             String trackingCode = StringUtil.getRandomString(6);
             Message.builder()
                     .type(Message.Type.MINE_LOAD_RESPONSE)
-                    .payload(Payload.withResponse(new Response(ResponseType.FAIL_NO_WORLD, mine.getWorldName(), trackingCode)))
+                    .payload(Payload.withResponse(new Response(ResponseType.FAIL_NO_WORLD, mine.getOwner(), trackingCode)))
                     .build().send(PrisonCore.getInstance().getBroker());
             throw new RuntimeException("UnknownWorldException on world %s tracking code %s".formatted(mine.getWorldName(), trackingCode), e);
         } catch (CorruptedWorldException e) {
             String trackingCode = StringUtil.getRandomString(6);
             Message.builder()
                     .type(Message.Type.MINE_LOAD_RESPONSE)
-                    .payload(Payload.withResponse(new Response(ResponseType.FAIL_CORRUPTED, mine.getWorldName(), trackingCode)))
+                    .payload(Payload.withResponse(new Response(ResponseType.FAIL_CORRUPTED, mine.getOwner(), trackingCode)))
                     .build().send(PrisonCore.getInstance().getBroker());
             throw new RuntimeException("CorruptedWorldException on world %s tracking code %s".formatted(mine.getWorldName(), trackingCode), e);
         } catch (NewerFormatException e) {
             String trackingCode = StringUtil.getRandomString(6);
             Message.builder()
                     .type(Message.Type.MINE_LOAD_RESPONSE)
-                    .payload(Payload.withResponse(new Response(ResponseType.FAIL_OLD, mine.getWorldName(), trackingCode)))
+                    .payload(Payload.withResponse(new Response(ResponseType.FAIL_OLD, mine.getOwner(), trackingCode)))
                     .build().send(PrisonCore.getInstance().getBroker());
             throw new RuntimeException("NewerFormatException on world %s tracking code %s".formatted(mine.getWorldName(), trackingCode), e);
         } catch (Exception e) {
             String trackingCode = StringUtil.getRandomString(6);
             Message.builder()
                     .type(Message.Type.MINE_LOAD_RESPONSE)
-                    .payload(Payload.withResponse(new Response(ResponseType.FAIL_GENERIC, mine.getWorldName(), trackingCode)))
+                    .payload(Payload.withResponse(new Response(ResponseType.FAIL_GENERIC, mine.getOwner(), trackingCode)))
                     .build().send(PrisonCore.getInstance().getBroker());
             throw new RuntimeException("IOException on world %s tracking code %s".formatted(mine.getWorldName(), trackingCode), e);
         }
@@ -148,14 +148,14 @@ public class LocalMineManager {
             String trackingCode = StringUtil.getRandomString(6);
             Message.builder()
                     .type(Message.Type.MINE_UNLOAD_RESPONSE)
-                    .payload(Payload.withResponse(new Response(ResponseType.FAIL_NO_WORLD, mine.getWorldName(), trackingCode)))
+                    .payload(Payload.withResponse(new Response(ResponseType.FAIL_NO_WORLD, mine.getOwner(), trackingCode)))
                     .build().send(PrisonCore.getInstance().getBroker());
             throw new RuntimeException("World not found %s tracking code %s".formatted(mine.getWorldName(), trackingCode));
         }
         Bukkit.unloadWorld(world, true);
         Message.builder()
                 .type(Message.Type.MINE_UNLOAD_RESPONSE)
-                .payload(Payload.withResponse(new Response(ResponseType.SUCCESS, mine.getWorldName(), "")))
+                .payload(Payload.withResponse(new Response(ResponseType.SUCCESS, mine.getOwner(), "")))
                 .build().send(PrisonCore.getInstance().getBroker());
     }
 

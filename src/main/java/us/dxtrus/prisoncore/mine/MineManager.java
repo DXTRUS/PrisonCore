@@ -57,7 +57,7 @@ public class MineManager {
 
             Message.builder()
                     .type(Message.Type.MINE_LOAD)
-                    .payload(Payload.withRequest(new MineRequest(mine.getWorldName(), server.getName())))
+                    .payload(Payload.withRequest(new MineRequest(mine.getOwner(), server.getName())))
                     .build().send(PrisonCore.getInstance().getBroker());
 
             PrivateMine m = handleLoadResponse(mine, server);
@@ -90,7 +90,7 @@ public class MineManager {
 
             Message.builder()
                     .type(Message.Type.MINE_UNLOAD)
-                    .payload(Payload.withString(mine.getWorldName()))
+                    .payload(Payload.withRequest(new MineRequest(mine.getOwner(), server.getName())))
                     .build().send(PrisonCore.getInstance().getBroker());
 
             PrivateMine m = handleUnLoadResponse(mine, server);
@@ -102,7 +102,7 @@ public class MineManager {
 
     private PrivateMine handleLoadResponse(PrivateMine mine, Server server) {
         CompletableFuture<Response> future = new CompletableFuture<>();
-        Broker.responses.put(mine.getWorldName(), future);
+        Broker.responses.put(mine.getOwner(), future);
         Response response = future.join();
 
         Lang.Errors errorMessages = Lang.getInstance().getErrors();
@@ -146,7 +146,7 @@ public class MineManager {
 
     private PrivateMine handleUnLoadResponse(PrivateMine mine, Server server) {
         CompletableFuture<Response> future = new CompletableFuture<>();
-        Broker.responses.put(mine.getWorldName(), future);
+        Broker.responses.put(mine.getOwner(), future);
         Response response = future.join();
 
         Lang.Errors errorMessages = Lang.getInstance().getErrors();

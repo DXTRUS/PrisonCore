@@ -8,6 +8,7 @@ import us.dxtrus.prisoncore.mine.models.Server;
 import us.dxtrus.prisoncore.mine.network.broker.Message;
 import us.dxtrus.prisoncore.mine.network.broker.Payload;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +21,7 @@ public class ServerManager {
 
     public ServerManager() {
         this.thisServer = new LocalServer();
-        TaskManager.runAsyncRepeat(PrisonCore.getInstance(), this::heartbeat, 20L);
+        TaskManager.runAsyncRepeat(PrisonCore.getInstance(), this::heartbeat, 1200L);
     }
 
     public static ServerManager getInstance() {
@@ -42,7 +43,7 @@ public class ServerManager {
     }
 
     public List<Server> getAllServers() {
-        return servers.values().stream().toList();
+        return new ArrayList<>(servers.values());
     }
 
     public Server getServer(String name) {
