@@ -6,7 +6,9 @@ import us.dxtrus.prisoncore.mine.models.Server;
 
 public class LocalServer extends Server {
     public LocalServer() {
-        super(ServerSettings.getInstance().getServerName(), 0, 20, 0);
+        super(ServerSettings.getInstance().getServerName(), ServerSettings.getInstance().getServerType(),
+                0, 20, 0, System.currentTimeMillis(), System.currentTimeMillis());
+        lastHeartbeat = System.currentTimeMillis();
     }
 
     @Override
@@ -22,5 +24,13 @@ public class LocalServer extends Server {
     @Override
     public double getMspt() {
         return Bukkit.getAverageTickTime();
+    }
+
+    public LocalServer withHeartbeatNow() {
+        lastHeartbeat = System.currentTimeMillis();
+        tps = getTps();
+        mspt = getMspt();
+        playerCount = getPlayerCount();
+        return this;
     }
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import us.dxtrus.commons.config.*;
 import us.dxtrus.prisoncore.PrisonCore;
+import us.dxtrus.prisoncore.mine.models.ServerType;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -30,6 +31,8 @@ public class ServerSettings {
 
     private String serverName = "prison-lobby-01";
 
+    @Comment("Types: SPAWN, MINE")
+    private ServerType serverType = ServerType.SPAWN;
 
     public static ServerSettings getInstance() {
         if (instance != null) {

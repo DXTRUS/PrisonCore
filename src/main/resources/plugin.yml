@@ -3,4 +3,4 @@ version: '${version}'
 main: us.dxtrus.prisoncore.PrisonCore
 api-version: '1.20'
 depend: [DxtrusCommons]
-softdepend: [PlaceholderAPI, DexterousScoreboard]
+softdepend: [PlaceholderAPI, DexterousScoreboard, HuskSync]

@@ -10,6 +10,7 @@ import com.infernalsuite.aswm.api.world.properties.SlimeProperties;
 import com.infernalsuite.aswm.api.world.properties.SlimePropertyMap;
 import com.infernalsuite.aswm.loaders.mysql.MysqlLoader;
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.World;
 import us.dxtrus.commons.utils.TaskManager;
 import us.dxtrus.prisoncore.PrisonCore;
@@ -95,6 +96,10 @@ public class LocalMineManager {
 
             TaskManager.runSync(PrisonCore.getInstance(), () -> {
                 swmApi.loadWorld(world, true);
+                World bukkitWorld = Bukkit.getWorld(mine.getWorldName());
+                if (bukkitWorld != null) {
+                    bukkitWorld.setGameRule(GameRule.KEEP_INVENTORY, true);
+                }
                 Mine link = mine.getLinkage();
                 link.setWalls();
                 link.reset();

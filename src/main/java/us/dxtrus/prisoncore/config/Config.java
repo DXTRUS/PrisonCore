@@ -70,7 +70,7 @@ public class Config {
 
         private List<String> format = List.of(
                 "",
-                "<yellow><bold>Token Enchants",
+                "&e&lToken Enchants",
                 "&e&l|&r %t-enchant-1%",
                 "&e&l|&r %t-enchant-2%",
                 "&e&l|&r %t-enchant-3%",
@@ -134,14 +134,6 @@ public class Config {
 
         @Comment("Allowed: LOWEST_PLAYER, LOWEST_USAGE, ROUND_ROBIN, RANDOM")
         private Distributor distributionRule = Distributor.LOWEST_PLAYER;
-
-        private List<String> mineServers = List.of(
-                "op-prisons-mines-01",
-                "op-prisons-mines-02"
-        );
-        private List<String> spawnServers = List.of(
-                "op-prisons-spawn-01"
-        );
     }
 
     private Redis redis = new Redis();

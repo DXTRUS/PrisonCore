@@ -15,4 +15,9 @@ public class PickaxeStats extends Tuple<Integer, Integer> implements DatabaseObj
     public Integer getExperience() {
         return getSecond();
     }
+
+    @Override
+    public String toString() {
+        return "Lvl: %s, Exp: %s".formatted(getLevel(), getExperience());
+    }
 }

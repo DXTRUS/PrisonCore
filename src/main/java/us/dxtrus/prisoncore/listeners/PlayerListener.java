@@ -18,12 +18,10 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        PickaxeManager.getJoining().add(event.getPlayer().getUniqueId());
         Player player = event.getPlayer();
         TaskManager.runAsync(plugin, () -> TransferManager.getInstance().checkout(player));
-        if (!player.hasPlayedBefore()) {
-            PickaxeManager.givePickaxe(player);
-        }
-        PickaxeManager.populateCache(player);
+        PickaxeManager.populateCache(event.getPlayer());
     }
 
     @EventHandler

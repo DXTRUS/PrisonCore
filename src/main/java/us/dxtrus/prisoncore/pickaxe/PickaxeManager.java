@@ -1,5 +1,6 @@
 package us.dxtrus.prisoncore.pickaxe;
 
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
@@ -17,7 +18,9 @@ import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.pickaxe.enchants.EnchantManager;
 import us.dxtrus.prisoncore.pickaxe.enchants.models.Enchant;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,6 +31,8 @@ public class PickaxeManager {
 
     private final NamespacedKey KEY = new NamespacedKey(plugin, "pickaxe");
     private static final String PDC_FORMAT = "%level%:%exp%";
+
+    @Getter private final Set<UUID> joining = new HashSet<>();
 
     private final Map<UUID, Integer> levelCache = new ConcurrentHashMap<>();
     private final Map<UUID, Integer> expCache = new ConcurrentHashMap<>();
@@ -53,10 +58,13 @@ public class PickaxeManager {
         ItemStack itemStack = player.getInventory().getItem(0);
         if (itemStack == null) {
             itemStack = new ItemStack(Material.DIAMOND_PICKAXE);
+            Bukkit.broadcastMessage("No inventory????????????????????????");
         }
         PickaxeStats stats = getStats(itemStack);
+        Bukkit.broadcastMessage(stats.toString());
         levelCache.put(player.getUniqueId(), stats.getLevel());
         expCache.put(player.getUniqueId(), stats.getExperience());
+        joining.remove(player.getUniqueId());
     }
 
     public int expRequirement(int level) {
@@ -116,6 +124,7 @@ public class PickaxeManager {
     }
 
     public void updatePickaxe(Player player) {
+        if (joining.contains(player.getUniqueId())) return;
         ItemStack itemStack = player.getInventory().getItem(0);
         if (itemStack == null) {
             givePickaxe(player);

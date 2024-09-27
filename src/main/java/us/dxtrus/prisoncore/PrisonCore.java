@@ -12,12 +12,12 @@ import us.dxtrus.prisoncore.commands.AdminCommand;
 import us.dxtrus.prisoncore.commands.CommandMine;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.config.Lang;
+import us.dxtrus.prisoncore.hooks.HuskSyncHook;
 import us.dxtrus.prisoncore.hooks.PAPIHook;
 import us.dxtrus.prisoncore.listeners.MineListener;
 import us.dxtrus.prisoncore.listeners.PlayerListener;
 import us.dxtrus.prisoncore.mine.LocalMineManager;
 import us.dxtrus.prisoncore.mine.MineManager;
-import us.dxtrus.prisoncore.mine.network.HeartBeat;
 import us.dxtrus.prisoncore.mine.network.ServerManager;
 import us.dxtrus.prisoncore.mine.network.TransferManager;
 import us.dxtrus.prisoncore.mine.network.broker.Broker;
@@ -49,14 +49,13 @@ public final class PrisonCore extends JavaPlugin {
         broker.connect();
 
         // Init all managers
-        StorageManager.getInstance();
         Config.getInstance();
         Lang.getInstance();
         ServerManager.getInstance();
+        StorageManager.getInstance();
         LocalMineManager.getInstance();
         MineManager.getInstance();
         TransferManager.getInstance();
-        HeartBeat.getInstance();
         PickaxeManager.startLoreUpdater();
 
         FastInvManager.register(this);
@@ -80,6 +79,10 @@ public final class PrisonCore extends JavaPlugin {
         ).forEach(e -> Bukkit.getPluginManager().registerEvents(e, this));
 
         new PAPIHook().register();
+
+        if (Bukkit.getPluginManager().getPlugin("HuskSync") != null) {
+            Bukkit.getPluginManager().registerEvents(new HuskSyncHook(), this);
+        }
     }
 
     @Override

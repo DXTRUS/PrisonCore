@@ -7,7 +7,7 @@ import us.dxtrus.prisoncore.mine.LocalMineManager;
 import us.dxtrus.prisoncore.util.MessageUtils;
 
 public class DeleteAllCommand extends BasicSubCommand {
-    @Command(name = "delete-all-mines", aliases = "prune", permission = "prisoncore.admin", async = true)
+    @Command(name = "delete-all-mines", aliases = "prune", permission = "prisoncore.admin", async = true, inGameOnly = false)
     public DeleteAllCommand() {
         super();
     }

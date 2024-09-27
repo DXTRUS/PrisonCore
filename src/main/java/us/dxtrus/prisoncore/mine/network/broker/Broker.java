@@ -14,6 +14,7 @@ import us.dxtrus.commons.utils.TaskManager;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.config.Lang;
+import us.dxtrus.prisoncore.mine.network.ServerManager;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -31,12 +32,16 @@ public abstract class Broker {
 
     protected void handle(@NotNull Message message) {
         switch (message.getType()) {
+            case MINE_UNLOAD -> message.getPayload()
+                    .getString().ifPresent(worldName -> {
 
-            case MINE_LOAD_RESPONSE -> message.getPayload()
+                    });
+
+            case MINE_LOAD_RESPONSE, MINE_UNLOAD_RESPONSE -> message.getPayload()
                     .getResponse().ifPresent(response -> {
                         CompletableFuture<Response> future = responses.remove(response.getMineWorld());
                         if (future == null) {
-                            // do nothing, this instance doesnt hold the handler for the world load.
+                            // do nothing, this instance doesn't hold the handler for the world (un)load.
                             return;
                         }
                         future.complete(response);
@@ -77,6 +82,9 @@ public abstract class Broker {
                     }, () -> {
                         throw new IllegalStateException("Broadcast message received with no broadcast info!");
                     });
+
+            case HEARTBEAT -> message.getPayload()
+                    .getServer().ifPresent(server -> ServerManager.getInstance().update(server));
 
             default -> throw new IllegalStateException("Unexpected value: " + message.getType());
         }

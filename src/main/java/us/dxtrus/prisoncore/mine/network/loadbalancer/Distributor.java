@@ -2,6 +2,7 @@ package us.dxtrus.prisoncore.mine.network.loadbalancer;
 
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.mine.models.Server;
+import us.dxtrus.prisoncore.mine.models.ServerType;
 import us.dxtrus.prisoncore.mine.network.ServerManager;
 
 import java.util.Comparator;
@@ -12,6 +13,7 @@ public enum Distributor {
         @Override
         public Server getServer() {
             List<Server> servers = ServerManager.getInstance().getAllServers();
+            servers.removeIf(server -> server.getType() != ServerType.MINE);
             if (servers.isEmpty()) return null;
             if (DistributorConstants.currentServerIndex >= servers.size() - 1) {
                 DistributorConstants.currentServerIndex = 0;
@@ -26,6 +28,7 @@ public enum Distributor {
         @Override
         public Server getServer() {
             List<Server> servers = ServerManager.getInstance().getAllServers();
+            servers.removeIf(server -> server.getType() != ServerType.MINE);
             servers.sort(Comparator.comparingInt(Server::getPlayerCount));
             return servers.getFirst();
         }
@@ -34,6 +37,7 @@ public enum Distributor {
         @Override
         public Server getServer() {
             List<Server> servers = ServerManager.getInstance().getAllServers();
+            servers.removeIf(server -> server.getType() != ServerType.MINE);
             servers.sort(Comparator.comparingDouble(Server::getMspt));
             return servers.getFirst();
         }
@@ -42,6 +46,7 @@ public enum Distributor {
         @Override
         public Server getServer() {
             List<Server> servers = ServerManager.getInstance().getAllServers();
+            servers.removeIf(server -> server.getType() != ServerType.MINE);
             int index = PrisonCore.getInstance().getRandom().nextInt(servers.size() - 1);
             return servers.get(index);
         }

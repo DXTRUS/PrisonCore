@@ -31,5 +31,6 @@ public class Message {
         BROADCAST,
         RELOAD,
         TOGGLE,
+        HEARTBEAT,
     }
 }

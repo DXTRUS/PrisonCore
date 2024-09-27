@@ -6,10 +6,7 @@ import us.dxtrus.prisoncore.config.Lang;
 import us.dxtrus.prisoncore.mine.models.PrivateMine;
 import us.dxtrus.prisoncore.mine.models.Server;
 import us.dxtrus.prisoncore.mine.network.ServerManager;
-import us.dxtrus.prisoncore.mine.network.broker.Broker;
-import us.dxtrus.prisoncore.mine.network.broker.Message;
-import us.dxtrus.prisoncore.mine.network.broker.Payload;
-import us.dxtrus.prisoncore.mine.network.broker.Response;
+import us.dxtrus.prisoncore.mine.network.broker.*;
 
 import java.util.Map;
 import java.util.UUID;
@@ -50,17 +47,23 @@ public class MineManager {
 
             if (Config.getInstance().getServers().isSingleInstance()) {
                 LocalMineManager.getInstance().load(mine);
-                return handleLoadResponse(mine, ServerManager.getInstance().getThisServer());
+                PrivateMine m = handleLoadResponse(mine, ServerManager.getInstance().getThisServer());
+                if (m == null) return null;
+                loadedMines.put(m.getOwner(), m);
+                return m;
             }
 
             Server server = ServerManager.getInstance().getRandomServer();
 
             Message.builder()
                     .type(Message.Type.MINE_LOAD)
-                    .payload(Payload.withString(mine.getWorldName()))
+                    .payload(Payload.withRequest(new MineRequest(mine.getWorldName(), server.getName())))
                     .build().send(PrisonCore.getInstance().getBroker());
 
-            return handleLoadResponse(mine, server);
+            PrivateMine m = handleLoadResponse(mine, server);
+            if (m == null) return null;
+            loadedMines.put(m.getOwner(), m);
+            return m;
         });
     }
 
@@ -77,7 +80,10 @@ public class MineManager {
 
             if (Config.getInstance().getServers().isSingleInstance()) {
                 LocalMineManager.getInstance().unload(mine);
-                return handleUnLoadResponse(mine, ServerManager.getInstance().getThisServer());
+                PrivateMine m = handleUnLoadResponse(mine, ServerManager.getInstance().getThisServer());
+                if (m == null) return null;
+                loadedMines.put(m.getOwner(), m);
+                return m;
             }
 
             Server server = ServerManager.getInstance().getRandomServer();
@@ -87,7 +93,10 @@ public class MineManager {
                     .payload(Payload.withString(mine.getWorldName()))
                     .build().send(PrisonCore.getInstance().getBroker());
 
-            return handleUnLoadResponse(mine, server);
+            PrivateMine m = handleUnLoadResponse(mine, server);
+            if (m == null) return null;
+            loadedMines.put(m.getOwner(), m);
+            return m;
         });
     }
 

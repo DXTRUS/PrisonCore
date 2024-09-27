@@ -8,7 +8,7 @@ import us.dxtrus.prisoncore.config.Lang;
 import us.dxtrus.prisoncore.util.MessageUtils;
 
 public class ReloadCommand extends BasicSubCommand {
-    @Command(name = "reload", permission = "prisoncore.admin", async = true)
+    @Command(name = "reload", permission = "prisoncore.admin", async = true, inGameOnly = false)
     public ReloadCommand() {
         super();
     }

@@ -1,5 +1,6 @@
 package us.dxtrus.prisoncore.mine.models;
 
+import com.google.gson.annotations.Expose;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -10,10 +11,20 @@ import java.util.Objects;
 @Getter
 @AllArgsConstructor
 public class Server {
-    private final String name;
-    private final int playerCount;
-    private final double tps;
-    private final double mspt;
+    @Expose
+    protected final String name;
+    @Expose
+    protected final ServerType type;
+    @Expose
+    protected int playerCount;
+    @Expose
+    protected double tps;
+    @Expose
+    protected double mspt;
+    @Expose
+    protected final long timeStarted;
+    @Expose
+    protected long lastHeartbeat;
 
     public void transferPlayer(Player player) {
         PrisonCore.getInstance().getMessenger().connect(player, name);
@@ -30,5 +41,11 @@ public class Server {
     @Override
     public int hashCode() {
         return Objects.hash(name, playerCount, tps, mspt);
+    }
+
+    @Override
+    public String toString() {
+        return "Server{name='%s', type='%s', playerCount=%d, tps=%f, mspt=%f, timeStarted=%d, lastHeartbeat=%d}"
+                .formatted(name, type.getName(), playerCount, tps, mspt, timeStarted, lastHeartbeat);
     }
 }

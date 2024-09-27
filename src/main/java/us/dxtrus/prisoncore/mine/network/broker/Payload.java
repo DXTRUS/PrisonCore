@@ -3,6 +3,7 @@ package us.dxtrus.prisoncore.mine.network.broker;
 import com.google.gson.annotations.Expose;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import us.dxtrus.prisoncore.mine.models.Server;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -27,6 +28,14 @@ public class Payload {
     @Nullable
     @Expose
     private Response response;
+
+    @Nullable
+    @Expose
+    private MineRequest mineRequest;
+
+    @Nullable
+    @Expose
+    private Server server;
 
     /**
      * Returns an empty cross-server message payload.
@@ -92,15 +101,41 @@ public class Payload {
     }
 
     /**
-     * Returns a payload containing a string.
+     * Returns a payload containing a response.
      *
-     * @param string the string
-     * @return a payload containing the string
+     * @param response the response
+     * @return a payload containing the response
      */
     @NotNull
     public static Payload withResponse(@NotNull Response response) {
         final Payload payload = new Payload();
         payload.response = response;
+        return payload;
+    }
+
+    /**
+     * Returns a payload containing a request.
+     *
+     * @param request the request
+     * @return a payload containing the request
+     */
+    @NotNull
+    public static Payload withRequest(@NotNull MineRequest request) {
+        final Payload payload = new Payload();
+        payload.mineRequest = request;
+        return payload;
+    }
+
+    /**
+     * Returns a payload containing a server.
+     *
+     * @param server the server
+     * @return a payload containing the server
+     */
+    @NotNull
+    public static Payload withServer(@NotNull Server server) {
+        final Payload payload = new Payload();
+        payload.server = server;
         return payload;
     }
 
@@ -122,5 +157,13 @@ public class Payload {
 
     public Optional<Response> getResponse() {
         return Optional.ofNullable(response);
+    }
+
+    public Optional<MineRequest> getRequest() {
+        return Optional.ofNullable(mineRequest);
+    }
+
+    public Optional<Server> getServer() {
+        return Optional.ofNullable(server);
     }
 }
