@@ -8,6 +8,8 @@ import us.dxtrus.prisoncore.mine.models.Server;
 import us.dxtrus.prisoncore.mine.network.ServerManager;
 import us.dxtrus.prisoncore.mine.network.broker.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -18,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MineManager {
     private static MineManager instance;
-    private final Map<UUID, PrivateMine> loadedMines = new ConcurrentHashMap<>();
+    private final Map<UUID, PrivateMine> minesCache = new ConcurrentHashMap<>();
 
     public static MineManager getInstance() {
         if (instance == null) {
@@ -27,8 +29,16 @@ public class MineManager {
         return instance;
     }
 
+    public List<PrivateMine> getAllMines() {
+        return new ArrayList<>(minesCache.values());
+    }
+
+    public void cacheMine(PrivateMine privateMine) {
+        minesCache.put(privateMine.getOwner(), privateMine);
+    }
+
     public PrivateMine getMine(UUID player) {
-        PrivateMine mine = loadedMines.get(player);
+        PrivateMine mine = minesCache.get(player);
         if (mine == null) {
             mine = new PrivateMine(player);
         }
@@ -49,7 +59,7 @@ public class MineManager {
                 LocalMineManager.getInstance().load(mine);
                 PrivateMine m = handleLoadResponse(mine, ServerManager.getInstance().getThisServer());
                 if (m == null) return null;
-                loadedMines.put(m.getOwner(), m);
+                cacheMine(m);
                 return m;
             }
 
@@ -62,7 +72,7 @@ public class MineManager {
 
             PrivateMine m = handleLoadResponse(mine, server);
             if (m == null) return null;
-            loadedMines.put(m.getOwner(), m);
+            cacheMine(m);
             return m;
         });
     }
@@ -82,7 +92,7 @@ public class MineManager {
                 LocalMineManager.getInstance().unload(mine);
                 PrivateMine m = handleUnLoadResponse(mine, ServerManager.getInstance().getThisServer());
                 if (m == null) return null;
-                loadedMines.put(m.getOwner(), m);
+                cacheMine(m);
                 return m;
             }
 
@@ -95,7 +105,7 @@ public class MineManager {
 
             PrivateMine m = handleUnLoadResponse(mine, server);
             if (m == null) return null;
-            loadedMines.put(m.getOwner(), m);
+            cacheMine(m);
             return m;
         });
     }
@@ -111,7 +121,6 @@ public class MineManager {
             case SUCCESS: {
                 mine.setServer(server);
                 mine.setLoaded(true);
-                loadedMines.put(mine.getOwner(), mine);
                 return mine;
             }
             case FAIL_NO_WORLD:
@@ -155,7 +164,6 @@ public class MineManager {
             case SUCCESS: {
                 mine.setServer(null);
                 mine.setLoaded(false);
-                loadedMines.remove(mine.getOwner());
                 return mine;
             }
             case FAIL_NO_WORLD:

@@ -27,6 +27,8 @@ public class Message {
         MINE_UNLOAD,
         MINE_UNLOAD_RESPONSE,
 
+        UPDATE_CACHE,
+
         NOTIFICATION,
         BROADCAST,
         RELOAD,

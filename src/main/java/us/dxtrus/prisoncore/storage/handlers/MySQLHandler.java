@@ -8,8 +8,10 @@ import us.dxtrus.commons.database.dao.Dao;
 import us.dxtrus.commons.shaded.hikari.HikariDataSource;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.config.Config;
+import us.dxtrus.prisoncore.mine.models.PrivateMine;
 import us.dxtrus.prisoncore.stats.Statistics;
 import us.dxtrus.prisoncore.storage.daos.DaoStatistics;
+import us.dxtrus.prisoncore.storage.daos.MineDao;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -105,6 +107,7 @@ public class MySQLHandler implements DatabaseHandler {
 
     public void registerDaos() {
         daos.put(Statistics.class, new DaoStatistics(dataSource));
+        daos.put(PrivateMine.class, new MineDao(dataSource));
     }
 
     @Override

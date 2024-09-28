@@ -18,6 +18,7 @@ import us.dxtrus.prisoncore.mine.LocalMineManager;
 import us.dxtrus.prisoncore.mine.MineManager;
 import us.dxtrus.prisoncore.mine.models.PrivateMine;
 import us.dxtrus.prisoncore.mine.network.ServerManager;
+import us.dxtrus.prisoncore.storage.StorageManager;
 
 import java.util.Map;
 import java.util.UUID;
@@ -38,7 +39,6 @@ public abstract class Broker {
         switch (message.getType()) {
             case MINE_LOAD -> message.getPayload()
                     .getRequest().ifPresent(request -> {
-                        Bukkit.broadcastMessage(request.toString());
                         if (!request.getPerformingServer()
                                 .equals(ServerManager.getInstance().getThisServer().getName())) {
                             return;
@@ -59,15 +59,18 @@ public abstract class Broker {
 
             case MINE_LOAD_RESPONSE, MINE_UNLOAD_RESPONSE -> message.getPayload()
                     .getResponse().ifPresent(response -> {
-                        Bukkit.broadcastMessage(response.toString());
                         CompletableFuture<Response> future = responses.remove(response.getMine());
                         if (future == null) {
                             // do nothing, this instance doesn't hold the handler for the world (un)load.
-                            Bukkit.broadcastMessage("abort mission, we dont want this response");
                             return;
                         }
                         future.complete(response);
                     });
+
+            case UPDATE_CACHE -> message.getPayload()
+                    .getUUID().ifPresent(mineUUID ->
+                            StorageManager.getInstance().get(PrivateMine.class, mineUUID).thenAccept(mine ->
+                                    mine.ifPresent(privateMine -> MineManager.getInstance().cacheMine(privateMine))));
 
             case NOTIFICATION -> message.getPayload()
                     .getNotification().ifPresentOrElse(notification -> {

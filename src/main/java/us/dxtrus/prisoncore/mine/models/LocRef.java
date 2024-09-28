@@ -1,5 +1,6 @@
 package us.dxtrus.prisoncore.mine.models;
 
+import com.google.gson.annotations.Expose;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -8,8 +9,11 @@ import org.bukkit.World;
 @Getter
 @AllArgsConstructor
 public class LocRef {
+    @Expose
     private final double x;
+    @Expose
     private final double y;
+    @Expose
     private final double z;
 
     public static LocRef fromLocation(Location location) {

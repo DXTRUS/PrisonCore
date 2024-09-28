@@ -158,8 +158,11 @@ public final class RedisBroker extends Broker {
                 LogUtil.warn("Failed to decode message from Redis: " + e.getMessage());
                 return;
             }
-
-            broker.handle(message);
+            try {
+                broker.handle(message);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
