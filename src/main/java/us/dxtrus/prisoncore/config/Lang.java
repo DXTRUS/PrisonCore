@@ -65,6 +65,15 @@ public class Lang {
             private String pickBlocksLore = "&cRequires Level: 1234";
         }
 
+        private Spawn spawn = new Spawn();
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Spawn {
+            private String teleport = "{prefix} Teleporting to spawn...";
+            private String teleportComplete = "{prefix} Teleported to spawn!";
+        }
+
         private Reload reload = new Reload();
         @Getter
         @Configuration

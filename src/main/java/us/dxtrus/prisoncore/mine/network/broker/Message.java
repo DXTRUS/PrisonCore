@@ -28,6 +28,7 @@ public class Message {
         MINE_UNLOAD_RESPONSE,
 
         UPDATE_CACHE,
+        UPDATE_LOCATIONS,
 
         NOTIFICATION,
         BROADCAST,

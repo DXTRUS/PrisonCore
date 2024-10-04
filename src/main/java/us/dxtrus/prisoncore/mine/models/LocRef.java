@@ -5,10 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.World;
+import us.dxtrus.commons.database.DatabaseObject;
 
 @Getter
 @AllArgsConstructor
-public class LocRef {
+public class LocRef implements DatabaseObject {
     @Expose
     private final double x;
     @Expose

@@ -5,6 +5,7 @@ import us.dxtrus.commons.utils.TaskManager;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.mine.models.Server;
+import us.dxtrus.prisoncore.mine.models.ServerType;
 import us.dxtrus.prisoncore.mine.network.broker.Message;
 import us.dxtrus.prisoncore.mine.network.broker.Payload;
 
@@ -21,7 +22,7 @@ public class ServerManager {
 
     public ServerManager() {
         this.thisServer = new LocalServer();
-        TaskManager.runAsyncRepeat(PrisonCore.getInstance(), this::heartbeat, 1200L);
+        TaskManager.runAsyncRepeat(PrisonCore.getInstance(), this::heartbeat, 20L);
     }
 
     public static ServerManager getInstance() {
@@ -38,8 +39,8 @@ public class ServerManager {
                 .build().send(PrisonCore.getInstance().getBroker());
     }
 
-    public Server getRandomServer() {
-        return Config.getInstance().getServers().getDistributionRule().getServer();
+    public Server getRandomServer(ServerType serverType) {
+        return Config.getInstance().getServers().getDistributionRule().getServer(serverType);
     }
 
     public List<Server> getAllServers() {

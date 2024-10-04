@@ -10,6 +10,7 @@ import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.config.Lang;
 import us.dxtrus.prisoncore.mine.LocalMineManager;
 import us.dxtrus.prisoncore.mine.MineManager;
+import us.dxtrus.prisoncore.mine.network.ServerManager;
 import us.dxtrus.prisoncore.mine.network.TransferManager;
 import us.dxtrus.prisoncore.mine.network.broker.Message;
 import us.dxtrus.prisoncore.mine.network.broker.Payload;
@@ -25,7 +26,7 @@ public class PrivateMine implements PrivateWorld {
     private final LocRef spawnLocation;
     private final LocRef center;
     private boolean loaded;
-    private Server server;
+    private String server;
     private LocRef npcLocation;
     private int level;
 
@@ -37,12 +38,13 @@ public class PrivateMine implements PrivateWorld {
         this.level = 1;
     }
 
-    public PrivateMine(@NotNull UUID owner, LocRef spawnLocation, LocRef center, LocRef npcLocation, int level, boolean loaded) {
+    public PrivateMine(@NotNull UUID owner, LocRef spawnLocation, LocRef center, LocRef npcLocation, Server server, int level, boolean loaded) {
         this.owner = owner;
         this.worldName = owner.toString();
         this.spawnLocation = spawnLocation;
         this.center = center;
         this.npcLocation = npcLocation;
+        this.server = server.getName();
         this.level = level;
         this.loaded = loaded;
     }
@@ -75,8 +77,13 @@ public class PrivateMine implements PrivateWorld {
 
     @Override
     public void setServer(Server server) {
-        this.server = server;
+        this.server = server == null ? "None" : server.getName();
         update();
+    }
+
+    @Override
+    public Server getServer() {
+        return ServerManager.getInstance().getServer(server);
     }
 
     public void connectLocal(Player player) {
@@ -91,7 +98,7 @@ public class PrivateMine implements PrivateWorld {
     }
 
     public void connect(Player player) {
-        TransferManager.getInstance().addPlayerForTransfer(player, server);
+        TransferManager.getInstance().addPlayerForTransfer(player, getServer(), TransferManager.TransferReason.GOTO_ISLAND, null);
         getServer().transferPlayer(player);
     }
 

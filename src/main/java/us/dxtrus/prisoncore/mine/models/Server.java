@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import us.dxtrus.prisoncore.PrisonCore;
+import us.dxtrus.prisoncore.mine.network.LocalServer;
 
 import java.util.Objects;
 
@@ -33,7 +34,7 @@ public class Server {
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
+        if (object == null || (object.getClass() != Server.class && object.getClass() != LocalServer.class)) return false;
         Server server = (Server) object;
         return name.equals(server.name);
     }
@@ -45,7 +46,7 @@ public class Server {
 
     @Override
     public String toString() {
-        return "Server{name='%s', type='%s', playerCount=%d, tps=%f, mspt=%f, timeStarted=%d, lastHeartbeat=%d}"
+        return "Server[name='%s', type='%s', playerCount=%d, tps=%f, mspt=%f, timeStarted=%d, lastHeartbeat=%d]"
                 .formatted(name, type.getName(), playerCount, tps, mspt, timeStarted, lastHeartbeat);
     }
 }

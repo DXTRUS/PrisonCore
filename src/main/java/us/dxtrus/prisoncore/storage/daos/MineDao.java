@@ -7,6 +7,8 @@ import us.dxtrus.commons.shaded.hikari.HikariDataSource;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.mine.models.LocRef;
 import us.dxtrus.prisoncore.mine.models.PrivateMine;
+import us.dxtrus.prisoncore.mine.models.Server;
+import us.dxtrus.prisoncore.mine.network.ServerManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,7 +40,9 @@ public class MineDao implements Dao<PrivateMine> {
                     final LocRef npcLoc = gson.fromJson(resultSet.getString("npcLoc"), LocRef.class);
                     final boolean loaded = resultSet.getBoolean("loaded");
                     final int level = resultSet.getInt("level");
-                    return Optional.of(new PrivateMine(ownerUUID, spawnLoc, center, npcLoc, level, loaded));
+                    String serverName = resultSet.getString("server");
+                    final Server server = serverName.equals("None") ? null : ServerManager.getInstance().getServer(serverName);
+                    return Optional.of(new PrivateMine(ownerUUID, spawnLoc, center, npcLoc, server, level, loaded));
                 }
             }
         } catch (SQLException e) {
@@ -70,7 +74,7 @@ public class MineDao implements Dao<PrivateMine> {
                 statement.setString(2, gson.toJson(privateMine.getSpawnLocation()));
                 statement.setString(3, gson.toJson(privateMine.getCenter()));
                 statement.setBoolean(4, privateMine.isLoaded());
-                statement.setString(5, privateMine.getServer().getName());
+                statement.setString(5, privateMine.getServer() == null ? "None" : privateMine.getServer().getName());
                 statement.setString(6, gson.toJson(privateMine.getNpcLocation()));
                 statement.setInt(7, privateMine.getLevel());
                 statement.execute();

@@ -105,6 +105,7 @@ public class Config {
         private boolean main = true;
         private boolean home = true;
         private boolean reset = true;
+        private boolean spawn = true;
     }
 
     private Storage storage = new Storage();

@@ -14,12 +14,16 @@ import us.dxtrus.commons.utils.TaskManager;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.config.Lang;
+import us.dxtrus.prisoncore.locations.Loc;
+import us.dxtrus.prisoncore.locations.Location;
+import us.dxtrus.prisoncore.locations.Locations;
 import us.dxtrus.prisoncore.mine.LocalMineManager;
 import us.dxtrus.prisoncore.mine.MineManager;
 import us.dxtrus.prisoncore.mine.models.PrivateMine;
 import us.dxtrus.prisoncore.mine.network.ServerManager;
 import us.dxtrus.prisoncore.storage.StorageManager;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -71,6 +75,13 @@ public abstract class Broker {
                     .getUUID().ifPresent(mineUUID ->
                             StorageManager.getInstance().get(PrivateMine.class, mineUUID).thenAccept(mine ->
                                     mine.ifPresent(privateMine -> MineManager.getInstance().cacheMine(privateMine))));
+
+            case UPDATE_LOCATIONS -> message.getPayload()
+                    .getString().ifPresent(locationStr -> {
+                        Arrays.stream(Location.values())
+                                .forEach(location -> StorageManager.getInstance().search(Loc.class, location.name())
+                                        .thenAccept(loc -> loc.ifPresent(Locations::registerLocation)));
+                    });
 
             case NOTIFICATION -> message.getPayload()
                     .getNotification().ifPresentOrElse(notification -> {

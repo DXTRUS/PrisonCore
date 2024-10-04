@@ -1,6 +1,5 @@
 package us.dxtrus.prisoncore.mine.network.loadbalancer;
 
-import org.bukkit.Bukkit;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.mine.models.Server;
 import us.dxtrus.prisoncore.mine.models.ServerType;
@@ -12,9 +11,9 @@ import java.util.List;
 public enum Distributor {
     ROUND_ROBIN {
         @Override
-        public Server getServer() {
+        public Server getServer(ServerType serverType) {
             List<Server> servers = ServerManager.getInstance().getAllServers();
-            servers.removeIf(server -> server.getType() != ServerType.MINE);
+            servers.removeIf(server -> server.getType() != serverType);
             if (servers.isEmpty()) return null;
             if (DistributorConstants.currentServerIndex >= servers.size() - 1) {
                 DistributorConstants.currentServerIndex = 0;
@@ -27,34 +26,31 @@ public enum Distributor {
     },
     LOWEST_PLAYER {
         @Override
-        public Server getServer() {
-            Bukkit.broadcastMessage("getting lowest player count");
+        public Server getServer(ServerType serverType) {
             List<Server> servers = ServerManager.getInstance().getAllServers();
-            Bukkit.broadcastMessage(servers.size() + " servers found");
-            servers.removeIf(server -> server.getType() != ServerType.MINE);
-            Bukkit.broadcastMessage(servers.size() + " servers after pruning");
+            servers.removeIf(server -> server.getType() != serverType);
             servers.sort(Comparator.comparingInt(Server::getPlayerCount));
             return servers.getFirst();
         }
     },
     LOWEST_USAGE {
         @Override
-        public Server getServer() {
+        public Server getServer(ServerType serverType) {
             List<Server> servers = ServerManager.getInstance().getAllServers();
-            servers.removeIf(server -> server.getType() != ServerType.MINE);
+            servers.removeIf(server -> server.getType() != serverType);
             servers.sort(Comparator.comparingDouble(Server::getMspt));
             return servers.getFirst();
         }
     },
     RANDOM {
         @Override
-        public Server getServer() {
+        public Server getServer(ServerType serverType) {
             List<Server> servers = ServerManager.getInstance().getAllServers();
-            servers.removeIf(server -> server.getType() != ServerType.MINE);
+            servers.removeIf(server -> server.getType() != serverType);
             int index = PrisonCore.getInstance().getRandom().nextInt(servers.size() - 1);
             return servers.get(index);
         }
     };
 
-    public abstract Server getServer();
+    public abstract Server getServer(ServerType serverType);
 }

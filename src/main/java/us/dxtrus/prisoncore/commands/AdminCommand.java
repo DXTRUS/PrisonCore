@@ -19,7 +19,8 @@ public class AdminCommand extends BukkitCommand {
                 new DeleteAllCommand(),
                 new GivePickCommand(),
                 new AddEnchantCommand(),
-                new ServerListCommand()
+                new ServerListCommand(),
+                new SetSpawnCommand()
         ).forEach(getSubCommands()::add);
     }
 
