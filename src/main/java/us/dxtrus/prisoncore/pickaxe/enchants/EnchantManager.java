@@ -10,6 +10,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.dxtrus.prisoncore.PrisonCore;
+import us.dxtrus.prisoncore.pickaxe.enchants.impl.gem.TornadoEnchant;
 import us.dxtrus.prisoncore.pickaxe.enchants.models.Enchant;
 import us.dxtrus.prisoncore.pickaxe.enchants.models.EnchantReference;
 
@@ -40,12 +41,20 @@ public class EnchantManager {
         return instance;
     }
 
+    public void stopAllEnchantEffects() {
+        enchants.forEach((id, enchant) -> {
+            if (enchant instanceof TornadoEnchant e) {
+                e.stopAllTornadoes();
+            }
+        });
+    }
+
     public ItemStack applyVanillaEnchants(ItemStack itemStack) {
         ItemMeta meta = itemStack.getItemMeta();
         meta.setUnbreakable(true);
         itemStack.setItemMeta(meta);
         itemStack.addUnsafeEnchantment(Enchantment.EFFICIENCY, 255);
-        itemStack.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP, ItemFlag.HIDE_UNBREAKABLE);
+        itemStack.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         return itemStack;
     }
 

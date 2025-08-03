@@ -11,6 +11,7 @@ import us.dxtrus.prisoncore.mine.models.Mine;
 import us.dxtrus.prisoncore.mine.models.MineMaterial;
 import us.dxtrus.prisoncore.pickaxe.PickaxeManager;
 import us.dxtrus.prisoncore.pickaxe.enchants.impl.gem.tornado.TornadoRunnable;
+import us.dxtrus.prisoncore.pickaxe.enchants.models.Enchant;
 import us.dxtrus.prisoncore.pickaxe.enchants.models.EnchantInfo;
 import us.dxtrus.prisoncore.pickaxe.enchants.models.EnchantTriggerData;
 import us.dxtrus.prisoncore.pickaxe.enchants.models.GemEnchant;
@@ -36,7 +37,8 @@ public class TornadoEnchant extends GemEnchant {
     @Override
     public void trigger(EnchantTriggerData data) {
         if (!(data.getCallingEvent() instanceof BlockBreakEvent event)) return;
-        if (!shouldProc(data.getLevel())) return;
+        if (!shouldProc(data.getLevel()) && !checkForceProc(data.getPlayer().getUniqueId())) return;
+        removeForceProc(data.getPlayer().getUniqueId());
 
         int height = (int) calcHeight(data.getLevel());
         int radius = (int) calcRadius(data.getLevel());
@@ -55,6 +57,14 @@ public class TornadoEnchant extends GemEnchant {
         TornadoRunnable tornadoRunnable = new TornadoRunnable(center, blockTypes, height, baseRadius);
         armourStandsRunnable.put(player, tornadoRunnable);
         tornadoRunnable.runTaskTimer(PrisonCore.getInstance(), 0, 1);
+    }
+
+    public void stopAllTornadoes() {
+        armourStandsRunnable.forEach((uuid, runnable) -> {
+            runnable.stop();
+        });
+
+        armourStandsRunnable.clear();
     }
 
     private void stopTornado(UUID player) {
@@ -91,7 +101,7 @@ public class TornadoEnchant extends GemEnchant {
         if (!mine.getBounds().contains(blockLoc)) return false;
 
         double breakChance = 1 - (double) y / height;
-        if (PrisonCore.getInstance().getRandom().nextDouble() < breakChance) {
+        if (PrisonCore.getInstance().getRandom().nextDouble() < breakChance && !Material.AIR.equals(block.getType())) {
             block.setType(Material.AIR);
             return true;
         }
@@ -107,6 +117,6 @@ public class TornadoEnchant extends GemEnchant {
     }
 
     private double calcRadius(int level) {
-        return 25 * Math.sin((level * Math.PI) / (2 * getMaxLevel()));
+        return 15 * Math.sin((level * Math.PI) / (2 * getMaxLevel()));
     }
 }

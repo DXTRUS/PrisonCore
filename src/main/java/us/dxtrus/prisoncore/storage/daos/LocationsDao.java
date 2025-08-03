@@ -3,7 +3,7 @@ package us.dxtrus.prisoncore.storage.daos;
 import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import us.dxtrus.commons.database.dao.Dao;
 import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.locations.Loc;

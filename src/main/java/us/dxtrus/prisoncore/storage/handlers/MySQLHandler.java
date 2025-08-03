@@ -102,7 +102,8 @@ public class MySQLHandler implements DatabaseHandler {
 
     @Override
     public void wipeDatabase() {
-        // do nun
+        // do not lol.
+        throw new UnsupportedOperationException("Cannot wipe prod database.");
     }
 
     public void registerDaos() {

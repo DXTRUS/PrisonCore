@@ -5,6 +5,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import us.dxtrus.commons.utils.StringUtils;
 import us.dxtrus.prisoncore.stats.Statistics;
 import us.dxtrus.prisoncore.stats.StatsManager;
 
@@ -49,45 +50,92 @@ public class PAPIHook extends PlaceholderExpansion {
             return "???";
         }
 
-        if (params.equalsIgnoreCase("tokens")) {
-            Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
-            if (stats == null) {
-                return "0";
+        return switch (params.toLowerCase()) {
+            case "player_name_g" -> applyGradientToName(player.getName(), "9555ff", "ffffff");
+
+            case "tokens" -> {
+                Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
+                if (stats == null || stats.getTokens().toString().equals("0")) {
+                    yield "0";
+                }
+
+                yield formatBigInteger(stats.getTokens(), true);
             }
 
-            if (stats.getTokens().toString().equals("0")) {
-                return "0";
+            case "gems" -> {
+                Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
+                if (stats == null || stats.getGems().toString().equals("0")) {
+                    yield "0";
+                }
+
+                yield formatBigInteger(stats.getGems(), false);
             }
 
-            return formatBigInteger(stats.getTokens(), true);
-        }
+            case "blocks_broken" -> {
+                Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
+                if (stats == null || stats.getBlocksBroken().toString().equals("0")) {
+                    yield "0";
+                }
 
-        if (params.equalsIgnoreCase("gems")) {
-            Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
-            if (stats == null) {
-                return "0";
+                yield formatBigInteger(stats.getBlocksBroken(), false);
             }
 
-            if (stats.getGems().toString().equals("0")) {
-                return "0";
-            }
-
-            return formatBigInteger(stats.getGems(), false);
-        }
-
-        if (params.equalsIgnoreCase("blocks_broken")) {
-            Statistics stats = StatsManager.getInstance().getStatistics(player.getUniqueId());
-            if (stats == null) {
-                return "0";
-            }
-
-            if (stats.getBlocksBroken().toString().equals("0")) {
-                return "0";
-            }
-
-            return formatBigInteger(stats.getBlocksBroken(), false);
-        }
-
-        return "&cN/A&r";
+            case "prestige" -> "0";
+            default -> "&cN/A&r";
+        };
     }
+
+    static float COLOR1_PORTION = 0.45f;
+
+    public static String applyGradientToName(String name, String color1Hex, String color2Hex) {
+        color1Hex = color1Hex.replace("#", "");
+        color2Hex = color2Hex.replace("#", "");
+
+        int r1 = Integer.parseInt(color1Hex.substring(0, 2), 16);
+        int g1 = Integer.parseInt(color1Hex.substring(2, 4), 16);
+        int b1 = Integer.parseInt(color1Hex.substring(4, 6), 16);
+
+        int r2 = Integer.parseInt(color2Hex.substring(0, 2), 16);
+        int g2 = Integer.parseInt(color2Hex.substring(2, 4), 16);
+        int b2 = Integer.parseInt(color2Hex.substring(4, 6), 16);
+
+        StringBuilder output = new StringBuilder();
+        int length = name.length();
+
+        for (int i = 0; i < length; i++) {
+            float progress = (float) i / (length - 1);
+
+            int r, g, b;
+
+            if (progress < COLOR1_PORTION) {
+                // Use solid color1Hex
+                r = r1;
+                g = g1;
+                b = b1;
+            } else {
+                // Interpolate from color1 to color2
+                float fadeRatio = (progress - COLOR1_PORTION) / (1.0f - COLOR1_PORTION);
+                fadeRatio = Math.max(0f, Math.min(1f, fadeRatio)); // Clamp to [0, 1]
+
+                r = (int) (r1 + fadeRatio * (r2 - r1));
+                g = (int) (g1 + fadeRatio * (g2 - g1));
+                b = (int) (b1 + fadeRatio * (b2 - b1));
+            }
+
+            String hex = String.format("%06X", (r << 16) | (g << 8) | b);
+            StringBuilder colorCode = new StringBuilder("§x");
+            for (char c : hex.toCharArray()) {
+                colorCode.append('§').append(c);
+            }
+
+            output.append(colorCode).append("§l").append(name.charAt(i));
+        }
+
+        return output.toString();
+    }
+
+    private static int clamp(int val) {
+        return Math.max(0, Math.min(255, val));
+    }
+
 }

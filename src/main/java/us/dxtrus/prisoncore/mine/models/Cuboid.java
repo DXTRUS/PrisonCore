@@ -1,5 +1,18 @@
 package us.dxtrus.prisoncore.mine.models;
 
+import com.fastasyncworldedit.core.FaweAPI;
+import com.fastasyncworldedit.core.function.pattern.LinearBlockPattern;
+import com.fastasyncworldedit.core.queue.IQueueChunk;
+import com.fastasyncworldedit.core.queue.IQueueExtent;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.EditSessionBuilder;
+import com.sk89q.worldedit.function.pattern.BlockPattern;
+import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.BlockVector3Imp;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -532,6 +545,23 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
     @Override
     public String toString() {
         return "Cuboid: " + worldName + "," + x1 + "," + y1 + "," + z1 + "=>" + x2 + "," + y2 + "," + z2;
+    }
+
+    public void faweSetAll(Material material) {
+        if (!material.isBlock()) {
+            Bukkit.getLogger().warning("faweSetAll called on non-block type %s".formatted(material.name()));
+            return;
+        }
+
+        com.sk89q.worldedit.world.World weWorld = FaweAPI.getWorld(worldName);
+        CuboidRegion region = new CuboidRegion(weWorld, BlockVector3.at(x1,y1,z1), BlockVector3.at(x2,y2,z2));
+        BlockPattern pattern = new BlockPattern(BlockTypes.get(material.name().toLowerCase()).getDefaultState());
+
+        IQueueExtent<IQueueChunk> queue = FaweAPI.createQueue(weWorld, true);
+        queue.setFastMode(true);
+        queue.setBlocks((Region) region, pattern);
+
+        queue.commit();
     }
 
     public enum CuboidDirection {

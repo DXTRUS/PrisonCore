@@ -10,6 +10,9 @@ import us.dxtrus.commons.gui.FastInvManager;
 import us.dxtrus.prisoncore.commands.AdminCommand;
 import us.dxtrus.prisoncore.commands.CommandMine;
 import us.dxtrus.prisoncore.commands.SpawnCommand;
+import us.dxtrus.prisoncore.commands.utility.CommandFly;
+import us.dxtrus.prisoncore.commands.utility.CommandGamemode;
+import us.dxtrus.prisoncore.commands.utility.CommandRtxOn;
 import us.dxtrus.prisoncore.config.Config;
 import us.dxtrus.prisoncore.config.Lang;
 import us.dxtrus.prisoncore.hooks.HuskSyncHook;
@@ -34,7 +37,10 @@ import us.dxtrus.prisoncore.pickaxe.enchants.impl.token.GemFinderEnchant;
 import us.dxtrus.prisoncore.pickaxe.enchants.impl.token.JackhammerEnchant;
 import us.dxtrus.prisoncore.pickaxe.listeners.PickaxeListeners;
 import us.dxtrus.prisoncore.pickaxe.listeners.ToolListeners;
+import us.dxtrus.prisoncore.stats.Statistics;
+import us.dxtrus.prisoncore.stats.StatsManager;
 import us.dxtrus.prisoncore.storage.StorageManager;
+import us.dxtrus.prisoncore.storage.daos.DaoStatistics;
 import us.dxtrus.prisoncore.util.BungeeMessage;
 
 import java.util.Arrays;
@@ -43,7 +49,8 @@ import java.util.stream.Stream;
 
 @Getter
 public final class PrisonCore extends JavaPlugin {
-    @Getter private static PrisonCore instance;
+    @Getter
+    private static PrisonCore instance;
     private final Random random = new Random(System.currentTimeMillis());
     private final BungeeMessage messenger = new BungeeMessage(this);
     private Broker broker;
@@ -55,7 +62,6 @@ public final class PrisonCore extends JavaPlugin {
         broker = new RedisBroker(this);
         broker.connect();
 
-        // Init all managers
         Config.getInstance();
         Lang.getInstance();
         ServerManager.getInstance();
@@ -66,11 +72,14 @@ public final class PrisonCore extends JavaPlugin {
         PickaxeManager.startLoreUpdater();
 
         FastInvManager.register(this);
-
         Stream.of(
                 new CommandMine(this),
                 new AdminCommand(this),
-                new SpawnCommand(this)
+                new SpawnCommand(this),
+
+                new CommandFly(this),
+                new CommandGamemode(this),
+                new CommandRtxOn(this)
         ).forEach(BukkitCommandManager.getInstance()::registerCommand);
 
         Stream.of(
@@ -88,7 +97,7 @@ public final class PrisonCore extends JavaPlugin {
 
         Arrays.stream(Location.values())
                 .forEach(location -> StorageManager.getInstance().search(Loc.class, location.name())
-                .thenAccept(loc -> loc.ifPresent(Locations::registerLocation)));
+                        .thenAccept(loc -> loc.ifPresent(Locations::registerLocation)));
 
         if (Config.getInstance().getServers().isSingleInstance()) { // Saves are done every update on multi-instance
             SaveJobs.startAll();
@@ -103,6 +112,9 @@ public final class PrisonCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        EnchantManager.getInstance().stopAllEnchantEffects();
+
+        StatsManager.saveAllOnline();
         for (PrivateMine mine : MineManager.getInstance().getAllMines()) {
             LocalMineManager.getInstance().unload(mine); // block the thread so that all islands are unloaded
             mine.setLoaded(false);
@@ -112,13 +124,6 @@ public final class PrisonCore extends JavaPlugin {
         SaveJobs.shutdownAll();
         broker.destroy();
         StorageManager.getInstance().shutdown();
-        for (World world : Bukkit.getWorlds()) {
-            world.getEntities().forEach(e -> {
-                if (!(e instanceof ArmorStand ars)) return;
-                if (ars.isVisible()) return;
-                ars.remove();
-            });
-        }
     }
 
     public boolean getRandomBoolean(double percentage) {

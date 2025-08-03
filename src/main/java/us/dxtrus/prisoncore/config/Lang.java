@@ -44,6 +44,9 @@ public class Lang {
         private String unknownArgs = "&c&l(!)&r &fUnknown Arguments.";
         private String disabled = "&c&l(!)&r &fCommand is disabled.";
 
+        private String gamemodeUpdated = "&fYour gamemode is now &#9555ff{0}&f.";
+        private String flyToggled = "&fYou have &#9555ff{0}&f flying.";
+
         private Mine mine = new Mine();
         @Getter
         @Configuration
@@ -95,6 +98,15 @@ public class Lang {
         private String worldCorrupted = "{prefix} &cYour mine is corrupted! &7Attempting to automatically fix this...";
         private String worldOldFormat = "{prefix} &cYour mine is outdated... &7Regenerating...";
         private String genericWorldError = "{prefix} &cAn unknown error has occurred with your mine! &7(Tracking Code: %s)";
+
+        private String noPermission = "&cInsufficient Permission";
+        private String mustBePlayer = "&cThis command is player-only.";
+        private String mustBeConsole = "&cThis command is console-only.";
+
+        private String invalidCommandArgs = "&cUnknown command arguments.";
+        private String argsRequired = "&cYou must specify {0}&c.";
+
+        private String unknown = "&cUnknown Error.";
     }
 
     public static void reload() {

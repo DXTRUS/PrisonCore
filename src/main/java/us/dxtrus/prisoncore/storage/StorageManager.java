@@ -84,7 +84,7 @@ public class StorageManager {
         });
     }
 
-    public <T extends DatabaseObject> CompletableFuture<Void> update(Class<T> clazz, T t, String[] params) {
+    public <T extends DatabaseObject> CompletableFuture<Void> update(Class<T> clazz, T t, String... params) {
         if (!isConnected()) {
             LogUtil.severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.completedFuture(null);

@@ -14,6 +14,8 @@ import us.dxtrus.prisoncore.mine.network.ServerManager;
 import us.dxtrus.prisoncore.mine.network.TransferManager;
 import us.dxtrus.prisoncore.mine.network.broker.Message;
 import us.dxtrus.prisoncore.mine.network.broker.Payload;
+import us.dxtrus.prisoncore.stats.Statistics;
+import us.dxtrus.prisoncore.stats.StatsManager;
 import us.dxtrus.prisoncore.storage.StorageManager;
 import us.dxtrus.prisoncore.util.MessageUtils;
 
@@ -21,6 +23,8 @@ import java.util.UUID;
 
 @Getter
 public class PrivateMine implements PrivateWorld {
+    public static double LEVEL_MULTIPLIER = 1.0046d;
+
     private final UUID owner;
     private final String worldName;
     private final LocRef spawnLocation;
@@ -28,14 +32,18 @@ public class PrivateMine implements PrivateWorld {
     private boolean loaded;
     private String server;
     private LocRef npcLocation;
+    private int experience = 0;
     private int level;
+    private Statistics playerStats;
 
     public PrivateMine(@NotNull UUID owner) {
         this.owner = owner;
         this.worldName = owner.toString();
-        this.spawnLocation = new LocRef(40.5, 65, 0.5);
+        this.spawnLocation = new LocRef(30.5, 65, 0.5);
         this.center = new LocRef(0, 64, 0);
         this.level = 1;
+
+        playerStats = StatsManager.getInstance().getStatistics(owner);
     }
 
     public PrivateMine(@NotNull UUID owner, LocRef spawnLocation, LocRef center, LocRef npcLocation, Server server, int level, boolean loaded) {
@@ -112,5 +120,36 @@ public class PrivateMine implements PrivateWorld {
                     .payload(Payload.withUUID(this.getOwner()))
                     .build().send(PrisonCore.getInstance().getBroker());
         }
+    }
+
+    public void levelUp(int level) {
+        this.level = level == -1 ? this.level + 1 : level;
+        getLinkage().remakeBounds();
+        getLinkage().reset();
+    }
+
+    public int determineSize() {
+        return (int) Math.clamp(
+                Math.ceil(15 + ((double) Math.max(level, 1) / 20)),
+                15d,
+                90d
+        );
+    }
+
+    public void addExperience(int xp) {
+        experience += xp;
+
+        if (experience >= totalXPToLevel(level + 1)) {
+            levelUp(-1);
+        }
+    }
+
+    public static int totalXPToLevel(int level) {
+        double baseXP = 500;
+        double multiplier = LEVEL_MULTIPLIER;
+        if (level == 1) return (int) baseXP;
+
+        double totalXP = baseXP * (Math.pow(multiplier, level - 1) - 1) / (multiplier - 1);
+        return (int) Math.round(totalXP);
     }
 }

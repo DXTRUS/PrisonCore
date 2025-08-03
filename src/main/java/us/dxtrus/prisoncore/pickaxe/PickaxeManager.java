@@ -18,10 +18,7 @@ import us.dxtrus.prisoncore.PrisonCore;
 import us.dxtrus.prisoncore.pickaxe.enchants.EnchantManager;
 import us.dxtrus.prisoncore.pickaxe.enchants.models.Enchant;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -31,6 +28,8 @@ public class PickaxeManager {
 
     private final NamespacedKey KEY = new NamespacedKey(plugin, "pickaxe");
     private static final String PDC_FORMAT = "%level%:%exp%";
+
+    public static Map<UUID, Enchant> forceProc = new HashMap<>();
 
     @Getter private final Set<UUID> joining = new HashSet<>();
 
@@ -141,8 +140,8 @@ public class PickaxeManager {
     }
 
     public boolean isPickaxe(@Nullable ItemStack itemStack) {
-        if (itemStack == null) return false;
-        return !itemStack.getPersistentDataContainer().isEmpty() && itemStack.getPersistentDataContainer().has(KEY);
+        if (itemStack == null || !itemStack.hasItemMeta()) return false;
+        return !itemStack.getItemMeta().getPersistentDataContainer().isEmpty() && itemStack.getItemMeta().getPersistentDataContainer().has(KEY);
     }
 
     private String getDataString(int exp, int level) {

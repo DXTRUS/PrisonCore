@@ -20,7 +20,9 @@ public class GemFinderEnchant extends TokenEnchant {
     @Override
     public void trigger(EnchantTriggerData data) {
         if (!(data.getCallingEvent() instanceof BlockBreakEvent event)) return;
-        if (!shouldProc(data.getLevel())) return;
+        if (!shouldProc(data.getLevel()) && !checkForceProc(data.getPlayer().getUniqueId())) return;
+        removeForceProc(data.getPlayer().getUniqueId());
+
         data.getPlayer().sendMessage("Gem finder triggered");
     }
 

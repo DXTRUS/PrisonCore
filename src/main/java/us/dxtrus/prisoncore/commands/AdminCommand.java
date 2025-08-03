@@ -20,12 +20,18 @@ public class AdminCommand extends BukkitCommand {
                 new GivePickCommand(),
                 new AddEnchantCommand(),
                 new ServerListCommand(),
-                new SetSpawnCommand()
+                new SetSpawnCommand(),
+                new ForceProcCommand(),
+
+                new SetMultiplierCommand(),
+                new TestLevelCommand(),
+
+                new CommandSetLevel()
         ).forEach(getSubCommands()::add);
     }
 
     @Override
-    public void execute(CommandUser commandUser, String[] strings) {
+    public void execute(CommandUser commandUser, String label, String[] strings) {
         if (strings.length >= 1) {
             if (subCommandExecutor(commandUser, strings)) return;
             MessageUtils.send(commandUser.getAudience(), Lang.getInstance().getCommand().getUnknownArgs());

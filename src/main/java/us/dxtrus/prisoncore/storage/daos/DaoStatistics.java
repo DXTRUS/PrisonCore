@@ -1,7 +1,7 @@
 package us.dxtrus.prisoncore.storage.daos;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import us.dxtrus.commons.database.dao.Dao;
 import us.dxtrus.commons.shaded.hikari.HikariDataSource;
 import us.dxtrus.prisoncore.PrisonCore;

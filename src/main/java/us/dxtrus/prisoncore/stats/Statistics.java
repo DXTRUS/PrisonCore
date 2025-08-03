@@ -34,6 +34,10 @@ public class Statistics implements DatabaseObject {
     }
 
     public void incrementBrokenBlocks() {
-        blocksBroken = blocksBroken.add(new BigDecimal("1"));
+        incrementBrokenBlocks(1);
+    }
+
+    public void incrementBrokenBlocks(int count) {
+        blocksBroken = blocksBroken.add(new BigDecimal(count));
     }
 }

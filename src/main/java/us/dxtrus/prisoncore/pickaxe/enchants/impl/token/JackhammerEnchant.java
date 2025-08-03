@@ -34,7 +34,9 @@ public class JackhammerEnchant extends TokenEnchant {
     @Override
     public void trigger(EnchantTriggerData data) {
         if (!(data.getCallingEvent() instanceof BlockBreakEvent event)) return;
-        if (!shouldProc(data.getLevel())) return;
+        if (!shouldProc(data.getLevel()) && !checkForceProc(data.getPlayer().getUniqueId())) return;
+        removeForceProc(data.getPlayer().getUniqueId());
+
         Mine mine = data.getMine().getLinkage();
         Location tl = mine.getBounds().getLowerNE();
         tl = tl.clone();

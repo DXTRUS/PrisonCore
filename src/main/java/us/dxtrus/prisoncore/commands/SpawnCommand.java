@@ -24,7 +24,7 @@ public class SpawnCommand extends BukkitCommand {
     }
 
     @Override
-    public void execute(CommandUser commandUser, String[] strings) {
+    public void execute(CommandUser commandUser, String label, String[] strings) {
         if (!Config.getInstance().getCommands().isSpawn()) {
             MessageUtils.send(commandUser.getAudience(), Lang.getInstance().getCommand().getDisabled());
             return;

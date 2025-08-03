@@ -16,22 +16,26 @@ repositories {
     maven { url 'https://repo.infernalsuite.com/repository/maven-snapshots/' }
     maven { url 'https://repo.rapture.pw/repository/maven-releases/' }
     maven { url 'https://repo.william278.net/snapshots' }
+    maven { url "https://maven.enginehub.org/repo/" }
 
-    maven {
-        name = "dxtrusReleases"
-        url = "https://maven.asdev.info/releases"
-        credentials(PasswordCredentials)
-        authentication {
-            basic(BasicAuthentication)
-        }
-    }
+//    maven {
+//        name = "dxtrusReleases"
+//        url = "https://maven.asdev.info/releases"
+//        credentials(PasswordCredentials)
+//        authentication {
+//            basic(BasicAuthentication)
+//        }
+//    }
 }
 
 dependencies {
     compileOnly "io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT"
-    compileOnly "us.dxtrus.commons:bukkit:2.1.5"
-    compileOnly 'com.infernalsuite.aswm:api:3.0.0'
-    implementation 'com.infernalsuite.aswm:loaders:3.0.0-SNAPSHOT'
+    compileOnly files("./libs/commons-2.1.5.jar", "./libs/api-4.0.0.jar")
+    // compileOnly 'com.infernalsuite.aswm:api:3.0.0'
+    //compileOnly 'com.infernalsuite.aswm:api:3.0.0'
+    implementation 'com.infernalsuite.asp:loaders:4.0.0-SNAPSHOT'
+    //implementation 'com.infernalsuite.asp:mysql-loader:4.0.0-SNAPSHOT'
+    //implementation 'com.infernalsuite.asp:api:4.0.0-SNAPSHOT'
 
     //compileOnly "net.dxtrus.scoreboard:DexterousScoreboard:1.1-SNAPSHOT"
 
@@ -49,6 +53,13 @@ dependencies {
     testCompileOnly 'org.jetbrains:annotations:24.1.0'
     testCompileOnly 'org.projectlombok:lombok:1.18.32'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
+
+    implementation platform("com.intellectualsites.bom:bom-newest:1.55") // Ref: https://github.com/IntellectualSites/bom
+
+    compileOnly "com.fastasyncworldedit:FastAsyncWorldEdit-Core"
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit") {
+        transitive = false
+    }
 }
 
 test {
@@ -75,7 +86,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 shadowJar {
-    relocate 'com.infernalsuite.aswm.loaders', 'us.dxtrus.prisoncore.libraries'
+    relocate 'com.infernalsuite.asp.loaders', 'us.dxtrus.prisoncore.libraries'
     destinationDirectory.set(file("$rootDir/target"))
     archiveClassifier.set('')
     minimize()

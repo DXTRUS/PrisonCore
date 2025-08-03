@@ -1,5 +1,6 @@
 package us.dxtrus.prisoncore.pickaxe.listeners;
 
+import org.bukkit.GameMode;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -20,6 +21,10 @@ public class ToolListeners implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent e) {
+        if (!GameMode.SURVIVAL.equals(e.getPlayer().getGameMode())) {
+            return;
+        }
+
         ItemStack tool = e.getPlayer().getInventory().getItemInMainHand();
         PrivateMine mine = MineManager.getInstance().getMine(e.getPlayer().getUniqueId());
         for (EnchantReference ref : enchantManager.getEnchantRefs(tool)) {
